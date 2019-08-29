@@ -187,24 +187,29 @@ export default new Vuex.Store({
         .then(() => commit('setDeletePdfLoading', false));
     },
     countNumPages({ commit }, payload) {
-      commit('setCountingNumPages', true);
-      var reader = new FileReader();
-      reader.onloadend = () => {
-        var loadingTask = pdfjsLib.getDocument({ data: reader.result });
-        loadingTask.promise.then((doc) => {
-          commit('setUploadPdfAttributes', {
-            title: payload.name,
-            numPages: doc.numPages
+      return new Promise((resolve, reject) => {
+        commit('setCountingNumPages', true);
+        var reader = new FileReader();
+        var success = 'countNumPages = success'
+        var error = 'zero pages'
+        reader.onloadend = () => {
+          var loadingTask = pdfjsLib.getDocument({ data: reader.result });
+          loadingTask.promise.then((doc) => {
+            commit('setUploadPdfAttributes', {
+              title: payload.name,
+              numPages: doc.numPages
+            });
+            commit('setCountingNumPages', false);
+            doc.numPages != 0 ? resolve(success) : reject(error)
           });
-          commit('setCountingNumPages', false);
-        });
-      };
-      reader.readAsBinaryString(payload);
+        };
+        reader.readAsBinaryString(payload);
+      });
     },
     submitPdf({ commit, state, dispatch }, payload) {
       commit('setSubmittingPdfs', true);
       dispatch('countNumPages', payload)
-        .then(() => {
+        .then(success => {
           dispatch('submitPdfToFirebase', {
             title: state.uploadPdfAttributes.title,
             numPages: state.uploadPdfAttributes.numPages,
@@ -213,7 +218,7 @@ export default new Vuex.Store({
               dispatch('resetUploadPdfAttributes');
               commit('setSubmittingPdfs', false);
             });
-        });
+        }, error => alert(error));
     },
     resetUploadPdfAttributes({ commit }) {
       commit('resetUploadPdfAttributes');
