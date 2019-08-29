@@ -94,8 +94,8 @@ export default new Vuex.Store({
       state.uploadPdfAttributes.numPages = 0;
     },
     setUploadPdfAttributes(state, payload) {
-      if (payload.title !== undefined) state.uploadPdfAttributes.title = payload.title;
-      if (payload.numPages !== undefined) state.uploadPdfAttributes.numPages = payload.numPages;
+      if (payload.title !== 'undefined') state.uploadPdfAttributes.title = payload.title;
+      if (payload.numPages !== 'undefined') state.uploadPdfAttributes.numPages = payload.numPages;
     },
   },
   actions: {
@@ -188,12 +188,14 @@ export default new Vuex.Store({
     },
     countNumPages({ commit }, payload) {
       commit('setCountingNumPages', true);
-      const reader = new FileReader();
+      commit('setUploadPdfAttributes', {
+        title: payload.name,
+      });
+      var reader = new FileReader();
       reader.onload = () => {
-        const loadingTask = pdfjsLib.getDocument({ data: this.result });
+        var loadingTask = pdfjsLib.getDocument({ data: this.result });
         loadingTask.promise.then((doc) => {
           commit('setUploadPdfAttributes', {
-            title: payload.name,
             numPages: doc.numPages,
           });
           commit('setCountingNumPages', false);
@@ -203,15 +205,17 @@ export default new Vuex.Store({
     },
     submitPdf({ commit, state, dispatch }, payload) {
       commit('setSubmittingPdfs', true);
+      commit('setUploadPdfAttributes', {
+        numPages: doc.numPages,
+      });
       dispatch('countNumPages', payload)
         .then(() => {
           /* eslint-disable no-console */
-          console.log(state.uploadPdfAttributes.title)
-          console.log(state.uploadPdfAttributes.NumPages);
+          console.log(state.uploadPdfAttributes.numPages);
           /* eslint-enable no-console */
           dispatch('submitPdfToFirebase', {
             title: state.uploadPdfAttributes.title,
-            numPages: state.uploadPdfAttributes.NumPages,
+            numPages: state.uploadPdfAttributes.numPages,
           })
             .then(() => {
               dispatch('resetUploadPdfAttributes');
