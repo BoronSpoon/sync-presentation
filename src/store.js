@@ -94,8 +94,8 @@ export default new Vuex.Store({
       state.uploadPdfAttributes.numPages = 0;
     },
     setUploadPdfAttributes(state, payload) {
-      if (payload.title !== 'undefined') state.uploadPdfAttributes.title = payload.title;
-      if (payload.numPages !== 'undefined') state.uploadPdfAttributes.numPages = payload.numPages;
+      state.uploadPdfAttributes.title = payload.title;
+      state.uploadPdfAttributes.numPages = payload.numPages;
     },
   },
   actions: {
@@ -188,17 +188,12 @@ export default new Vuex.Store({
     },
     countNumPages({ commit }, payload) {
       commit('setCountingNumPages', true);
-      commit('setUploadPdfAttributes', {
-        title: payload.name,
-      });
       var reader = new FileReader();
       reader.onloadend = () => {
         var loadingTask = pdfjsLib.getDocument({ data: reader.result });
         loadingTask.promise.then((doc) => {
-          /* eslint-disable no-console */
-          console.log(doc);
-          /* eslint-enable no-console */
           commit('setUploadPdfAttributes', {
+            title: payload.name,
             numPages: doc.numPages
           });
           commit('setCountingNumPages', false);
@@ -210,9 +205,7 @@ export default new Vuex.Store({
       commit('setSubmittingPdfs', true);
       dispatch('countNumPages', payload)
         .then(() => {
-          /* eslint-disable no-console */
-          console.log(state.uploadPdfAttributes.numPages);
-          /* eslint-enable no-console */
+          alert(state.uploadPdfAttributes.numPages);
           dispatch('submitPdfToFirebase', {
             title: state.uploadPdfAttributes.title,
             numPages: state.uploadPdfAttributes.numPages,
