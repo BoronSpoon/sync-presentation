@@ -32,7 +32,6 @@
       </template>
       <template v-else>
       <v-list>
-        <v-subheader class="headline"> Completed </v-subheader>
         <template v-if="pdfList.length">
         <v-list-item
           class="pl-2"

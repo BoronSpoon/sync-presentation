@@ -197,10 +197,10 @@ export default new Vuex.Store({
           loadingTask.promise.then((doc) => {
             commit('setUploadPdfAttributes', {
               title: payload.name,
-              numPages: doc.numPages
+              numPages: doc.numPages,
             });
             commit('setCountingNumPages', false);
-            doc.numPages != 0 ? resolve(success) : reject(error)
+            doc.numPages != 0 ? resolve(success) : reject(error);
           });
         };
         reader.readAsBinaryString(payload);
@@ -209,7 +209,7 @@ export default new Vuex.Store({
     submitPdf({ commit, state, dispatch }, payload) {
       commit('setSubmittingPdfs', true);
       dispatch('countNumPages', payload)
-        .then(success => {
+        .then((success) => {
           dispatch('submitPdfToFirebase', {
             title: state.uploadPdfAttributes.title,
             numPages: state.uploadPdfAttributes.numPages,
