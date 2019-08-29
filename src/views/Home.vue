@@ -53,7 +53,7 @@
           </v-list-item-action>
           <v-list-item-content>
           <v-list-item-title>
-            {{ item.title }}: {{ item.numPages }} pages
+            {{ item.title }}: total {{ item.numPages }} pages at p.{{ item.resumePage }}
           </v-list-item-title>
           </v-list-item-content>
         </v-list-item>

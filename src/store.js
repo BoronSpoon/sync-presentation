@@ -40,6 +40,7 @@ export default new Vuex.Store({
     pdfList: [],
     uploadPdfAttributes: {
       numPages: 0,
+      resumePage: 1,
       title: '',
     },
   },
@@ -99,10 +100,13 @@ export default new Vuex.Store({
     resetUploadPdfAttributes(state) {
       state.uploadPdfAttributes.title = '';
       state.uploadPdfAttributes.numPages = 0;
+      state.uploadPdfAttributes.resumePage = 1;
+
     },
     setUploadPdfAttributes(state, payload) {
       state.uploadPdfAttributes.title = payload.title;
       state.uploadPdfAttributes.numPages = payload.numPages;
+      state.uploadPdfAttributes.resumePage = payload.resumePage;
     },
   },
   actions: {
@@ -215,6 +219,7 @@ export default new Vuex.Store({
             commit('setUploadPdfAttributes', {
               title: payload.name,
               numPages: doc.numPages,
+              resumePage: 1,
             });
             commit('setCountingNumPages', false);
             doc.numPages != 0 ? resolve(success) : reject(error);
@@ -230,6 +235,7 @@ export default new Vuex.Store({
           dispatch('submitPdfToFirebase', {
             title: state.uploadPdfAttributes.title,
             numPages: state.uploadPdfAttributes.numPages,
+            resumePage: state.uploadPdfAttributes.resumePage,
           })
             .then(() => {
               dispatch('resetUploadPdfAttributes');

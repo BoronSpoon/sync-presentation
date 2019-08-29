@@ -1,8 +1,5 @@
 <template>
   <div>
-    <v-alert v-model="error" dismissible type="error">
-      {{ error }}
-    </v-alert>
     <v-card>
       <v-toolbar color="light-green" dark>
         <v-toolbar-title>
