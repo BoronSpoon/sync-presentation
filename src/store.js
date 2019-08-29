@@ -34,10 +34,10 @@ export default new Vuex.Store({
     },
     uid: '',
     pdfList: [],
-    uploadPdfAttrubutes: {
+    uploadPdfAttributes: {
       numPages: 0,
-      title: ''
-    }
+      title: '',
+    },
   },
   mutations: {
     setNewPdfLoading(state, data) {
@@ -91,12 +91,12 @@ export default new Vuex.Store({
     },
     resetUploadPdfAttributes(state) {
       state.uploadPdfAttributes.title = '';
-      state.uploadPdfAttrubutes.numPages = 0;
+      state.uploadPdfAttributes.numPages = 0;
     },
     setUploadPdfAttributes(state, payload) {
-      if (payload.title !== undefined) state.title = payload.title;
-      if (payload.numPages !== undefined) state.numPages = payload.numPages;
-    }
+      if (payload.title !== undefined) state.uploadPdfAttributes.title = payload.title;
+      if (payload.numPages !== undefined) state.uploadPdfAttributes.numPages = payload.numPages;
+    },
   },
   actions: {
     createNewUserAccount({ commit }, payload) {
@@ -188,9 +188,9 @@ export default new Vuex.Store({
     },
     countNumPages({ commit }, payload) {
       commit('setCountingNumPages', true);
-      var reader = new FileReader();
-      reader.onload = function() {
-        var loadingTask = pdfjsLib.getDocument({ data: this.result})
+      const reader = new FileReader();
+      reader.onload = () => {
+        const loadingTask = pdfjsLib.getDocument({ data: this.result });
         loadingTask.promise.then((doc) => {
           commit('setUploadPdfAttributes', {
             title: payload.name,
@@ -198,16 +198,20 @@ export default new Vuex.Store({
           });
           commit('setCountingNumPages', false);
         });
-      }
-      reader.readAsBinaryString(payload)
+      };
+      reader.readAsBinaryString(payload);
     },
     submitPdf({ commit, state, dispatch }, payload) {
       commit('setSubmittingPdfs', true);
       dispatch('countNumPages', payload)
         .then(() => {
+          /* eslint-disable no-console */
+          console.log(state.uploadPdfAttributes.title)
+          console.log(state.uploadPdfAttributes.NumPages);
+          /* eslint-enable no-console */
           dispatch('submitPdfToFirebase', {
-            title: state.uploadPdfAttrubutes.title,
-            numPages: state.uploadPdfAttrubutes.NumPages,
+            title: state.uploadPdfAttributes.title,
+            numPages: state.uploadPdfAttributes.NumPages,
           })
             .then(() => {
               dispatch('resetUploadPdfAttributes');
