@@ -192,11 +192,14 @@ export default new Vuex.Store({
         title: payload.name,
       });
       var reader = new FileReader();
-      reader.onload = () => {
-        var loadingTask = pdfjsLib.getDocument({ data: this.result });
+      reader.onloadend = () => {
+        var loadingTask = pdfjsLib.getDocument({ data: reader.result });
         loadingTask.promise.then((doc) => {
+          /* eslint-disable no-console */
+          console.log(doc);
+          /* eslint-enable no-console */
           commit('setUploadPdfAttributes', {
-            numPages: doc.numPages,
+            numPages: doc.numPages
           });
           commit('setCountingNumPages', false);
         });
@@ -205,9 +208,6 @@ export default new Vuex.Store({
     },
     submitPdf({ commit, state, dispatch }, payload) {
       commit('setSubmittingPdfs', true);
-      commit('setUploadPdfAttributes', {
-        numPages: doc.numPages,
-      });
       dispatch('countNumPages', payload)
         .then(() => {
           /* eslint-disable no-console */
