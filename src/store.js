@@ -205,7 +205,6 @@ export default new Vuex.Store({
       commit('setSubmittingPdfs', true);
       dispatch('countNumPages', payload)
         .then(() => {
-          alert(state.uploadPdfAttributes.numPages);
           dispatch('submitPdfToFirebase', {
             title: state.uploadPdfAttributes.title,
             numPages: state.uploadPdfAttributes.numPages,
