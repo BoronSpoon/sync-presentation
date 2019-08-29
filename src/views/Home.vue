@@ -44,9 +44,16 @@
             <v-icon>delete_outline</v-icon>
           </v-btn>
           </v-list-item-action>
+          <v-list-item-action>
+          <v-btn
+            @click="presentPdf(item)"
+            :loading="presentPdfLoading" text icon>
+            <v-icon>slideshow</v-icon>
+          </v-btn>
+          </v-list-item-action>
           <v-list-item-content>
           <v-list-item-title>
-            {{ item.Pdf }}
+            {{ item.title }}: {{ item.numPages }} pages
           </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
@@ -88,6 +95,7 @@ export default {
       markPdfsAsDoneLoading: state => state.loadings.markPdfsAsDone,
       getAllPdfsLoading: state => state.loadings.getAllPdfs,
       deletePdfLoading: state => state.loadings.deletingPdf,
+      presentPdfLoading: state => state.loadings.presentingPdf,
       pdfList: state => state.pdfList,
     }),
   },
@@ -98,6 +106,7 @@ export default {
     ...mapActions([
       'getAllPdfsForUser',
       'deletePdf',
+      'presentPdf',
       'submitPdf',
     ]),
   },

@@ -29,8 +29,12 @@ export default new Vuex.Store({
       newPdf: false,
       getAllPdfs: false,
       deletingPdf: false,
+      presentingPdf: false,
       countingNumPages: false,
       submittingPdfs: false,
+    },
+    status: {
+      presentingPdf: false,
     },
     uid: '',
     pdfList: [],
@@ -45,6 +49,9 @@ export default new Vuex.Store({
     },
     setDeletePdfLoading(state, data) {
       state.loadings.deletingPdf = data;
+    },
+    setPresentPdfLoading(state, data) {
+      state.loadings.presentingPdf = data;
     },
     setAllPdfsLoading(state, data) {
       state.loadings.getAllPdfs = data;
@@ -185,6 +192,16 @@ export default new Vuex.Store({
         .ref(`${DATABASE}/${state.uid}`)
         .update(updates)
         .then(() => commit('setDeletePdfLoading', false));
+    },    
+    presentPdf({ commit, state }, payload) {
+      commit('setPresentPdfLoading', true);
+      const updates = {};
+      updates[`/${payload.PdfId}/`] = null;
+      firebase
+        .database()
+        .ref(`${DATABASE}/${state.uid}`)
+        .update(updates)
+        .then(() => commit('setPresentPdfLoading', false));
     },
     countNumPages({ commit }, payload) {
       return new Promise((resolve, reject) => {
