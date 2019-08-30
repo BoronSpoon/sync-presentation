@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
+import 'firebase/storage';
 import pdfjsLib from 'pdfjs-dist';
 
 Vue.use(Vuex);
@@ -42,6 +43,10 @@ export default new Vuex.Store({
     bufferedPdf: '',
     uid: '',
     pdfList: [],
+    uploadBuffer: {
+      title: '',
+      file: '',
+    },
     uploadPdfAttributes: {
       numPages: 0,
       resumePage: 1,
@@ -120,6 +125,14 @@ export default new Vuex.Store({
       state.uploadPdfAttributes.title = payload.title;
       state.uploadPdfAttributes.numPages = payload.numPages;
       state.uploadPdfAttributes.resumePage = payload.resumePage;
+    },
+    setUploadBuffer(state, payload) {
+      state.uploadBuffer.title = payload.title;
+      state.uploadBuffer.file = payload.file;
+    },
+    resetUploadBuffer(state) {
+      state.uploadBuffer.title = '';
+      state.uploadBuffer.file = '';
     },
     setPresentingPdfAttributes(state, payload) {
       state.presentingPdfAttributes.title = payload.title;
@@ -236,11 +249,9 @@ export default new Vuex.Store({
         .update(updates)
         .then(() => commit('setDeletePdfLoading', false));
     },
-    uploadFile(payload) {
+    uploadFile({ state }, payload) {
       return new Promise((resolve) => {
-        storageRef.child(payload.path).put(payload.file).then(() => {
-          resolve();
-        });
+        storageRef.child(payload.title).put(payload.file).then(() => {});
       });
     },
     presentPdf({ commit, state }, payload) {
@@ -277,7 +288,11 @@ export default new Vuex.Store({
               resumePage: 1,
             });
             commit('setCountingNumPages', false);
-            doc.numPages != 0 ? resolve(success) : reject(error);
+            if (doc.numPages != 0) {
+              resolve(success);
+            } else {
+              reject(error);
+            }
           });
         };
         reader.readAsBinaryString(payload);
@@ -293,14 +308,17 @@ export default new Vuex.Store({
             resumePage: state.uploadPdfAttributes.resumePage,
           })
             .then(() => {
-              dispatch('uploadFile', {
+              commit('setUploadBuffer', {
                 path: `user/${state.uid}/${state.uploadPdfAttributes.title}`,
                 file: payload,
-              });
-            })
-            .then(() => {
-              dispatch('resetUploadPdfAttributes');
-              commit('setSubmittingPdfs', false);
+              })
+                .then(() => {
+                  dispatch('uploadFile');
+                })
+                .then(() => {
+                  dispatch('resetUploadPdfAttributes');
+                  commit('setSubmittingPdfs', false);
+                });
             });
         }, error => alert(error));
     },
