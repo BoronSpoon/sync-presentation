@@ -62,7 +62,7 @@
         <v-list-item class="pl-2">
           <v-list-item-content>
           <v-alert :value="true" outlined color="warning" icon="info">
-            No       Pdfs
+            No Pdfs
           </v-alert>
           </v-list-item-content>
         </v-list-item>

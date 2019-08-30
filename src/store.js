@@ -36,6 +36,7 @@ export default new Vuex.Store({
     status: {
       presentingPdf: false,
     },
+    bufferedPdf: '',
     uid: '',
     pdfList: [],
     uploadPdfAttributes: {
@@ -107,6 +108,9 @@ export default new Vuex.Store({
       state.uploadPdfAttributes.title = payload.title;
       state.uploadPdfAttributes.numPages = payload.numPages;
       state.uploadPdfAttributes.resumePage = payload.resumePage;
+    },
+    setBufferedPdf(state, papyload) {
+      state.bufferedPdf
     },
   },
   actions: {
@@ -199,13 +203,10 @@ export default new Vuex.Store({
     },    
     presentPdf({ commit, state }, payload) {
       commit('setPresentPdfLoading', true);
-      const updates = {};
-      updates[`/${payload.PdfId}/`] = null;
-      firebase
-        .database()
-        .ref(`${DATABASE}/${state.uid}`)
-        .update(updates)
-        .then(() => commit('setPresentPdfLoading', false));
+      pdfjsLib.getDocument(title).promise.then(function(pdf) {
+        setBufferedPdf(pdf)
+      })
+      commit('setPresentPdfLoading', false);
     },
     countNumPages({ commit }, payload) {
       return new Promise((resolve, reject) => {
