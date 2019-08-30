@@ -19,6 +19,7 @@ firebase.initializeApp({
 });
 
 const DATABASE = 'pdf-list';
+var storageRef = firebase.storage().ref();
 
 export default new Vuex.Store({
   state: {
@@ -33,6 +34,7 @@ export default new Vuex.Store({
       presentingPdf: false,
       countingNumPages: false,
       submittingPdfs: false,
+      uplodadingFile: false,
     },
     status: {
       presentingPdf: false,
@@ -127,8 +129,11 @@ export default new Vuex.Store({
       state.presentingPdfAttributes.uid = payload.uid;
       state.presentingPdfAttributes.pdfid = payload.pdfid;
     },
-    setBufferedPdf(state, papyload) {
-      state.bufferedPdf
+    setBufferedPdf(state, payload) {
+      state.bufferedPdf = payload
+    },
+    setUplodadingFile(state, payload) {
+      state.uplodadingFile = payload
     },
   },
   actions: {
@@ -179,7 +184,7 @@ export default new Vuex.Store({
         commit('setSubmittingPdfToFirebase', true);
         firebase
           .database()
-          .ref(`${DATABASE}/${state.uid}/pdfs`)
+          .ref(`${DATABASE}/${state.uid}`)
           .push(payload)
           .then(() => {
             commit('setSubmittingPdfToFirebase', false);
@@ -192,7 +197,7 @@ export default new Vuex.Store({
         commit('setSubmittingPresentingDataToFirebase', true);
         firebase
           .database()
-          .ref(`${DATABASE}/${state.uid}/presenting`)
+          .ref(`${DATABASE}/presenting`)
           .push(payload)
           .then(() => {
             commit('setSubmittingPresentingDataToFirebase', false);
@@ -204,7 +209,7 @@ export default new Vuex.Store({
       commit('setAllPdfsLoading', true);
       const PdfList = firebase
         .database()
-        .ref(`${DATABASE}/${state.uid}/pdfs`);
+        .ref(`${DATABASE}/${state.uid}`);
       PdfList.on('value', (data) => {
         commit('setPdfList', data.val());
         commit('setAllPdfsLoading', false);
@@ -228,10 +233,17 @@ export default new Vuex.Store({
       updates[`/${payload.PdfId}/`] = null;
       firebase
         .database()
-        .ref(`${DATABASE}/${state.uid}/pdfs`)
+        .ref(`${DATABASE}/${state.uid}`)
         .update(updates)
         .then(() => commit('setDeletePdfLoading', false));
     },    
+    uploadFile({ commit, state }, payload) {
+      return new Promise((resolve) => {
+        storageRef.child(payload.path).put(payload.file).then(function(snapshot) {
+          resolve()
+        });
+      })        
+    },
     presentPdf({ commit, state }, payload) {
       commit('setPresentPdfLoading', true);
       pdfjsLib.getDocument(title).promise.then(function(pdf) {
@@ -244,7 +256,11 @@ export default new Vuex.Store({
         uid: state.uid,
         pdfid: payload.pdfid,
       }),
-      commit('setSubmittingPresentingDataToFirebase', state.presentingPdfAttributes)
+      commit('setSubmittingPresentingDataToFirebase', {
+        title: state.presentingPdfAttributes.title,
+        numPages: state.presentingPdfAttributes.numPages,
+        currentPage: state.presentingPdfAttributes.currentPage,
+      })
       .then(() => commit('setPresentPdfLoading', false));
 
     },
@@ -279,9 +295,15 @@ export default new Vuex.Store({
             resumePage: state.uploadPdfAttributes.resumePage,
           })
             .then(() => {
-              dispatch('resetUploadPdfAttributes');
-              commit('setSubmittingPdfs', false);
-            });
+              dispatch('uploadFile', {
+                path: `user/${state.uid}/${state.uploadPdfAttributes.title}`,
+                file: payload,
+              });
+            })
+              .then(() => {
+                dispatch('resetUploadPdfAttributes');
+                commit('setSubmittingPdfs', false);
+              });
         }, error => alert(error));
     },
     resetUploadPdfAttributes({ commit }) {
