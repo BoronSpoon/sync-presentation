@@ -1,12 +1,39 @@
 <template>
   <div>
   <v-container>
+
     <v-row no-gutters>
       <v-col>
-        <v-card tile outlined>
+        <v-card tile>
         </v-card>
       </v-col>
-    </v-row>    
+    </v-row>
+    
+    <v-row no-gutters>
+      <v-col>
+        <v-card tile center>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <v-row no-gutters>
+      <v-col>
+        <v-card tile>
+        </v-card>
+      </v-col>
+
+      <v-col>
+        <v-card tile>
+
+        </v-card>
+      </v-col>
+
+      <v-col>
+        <v-card tile>
+        </v-card>
+      </v-col>
+    </v-row>            
+
   </v-container>
   </div>
 </template>
