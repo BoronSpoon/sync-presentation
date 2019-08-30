@@ -249,9 +249,11 @@ export default new Vuex.Store({
         .update(updates)
         .then(() => commit('setDeletePdfLoading', false));
     },
-    uploadFile({ state }, payload) {
+    uploadFile(payload) {
       return new Promise((resolve) => {
-        storageRef.child(payload.title).put(payload.file).then(() => {});
+        storageRef.child(`${DATABASE}/${state.uid}/${payload.title}`).put(payload.file).then(() => {
+          resolve();
+        });
       });
     },
     presentPdf({ commit, state }, payload) {
@@ -270,8 +272,8 @@ export default new Vuex.Store({
         title: state.presentingPdfAttributes.title,
         numPages: state.presentingPdfAttributes.numPages,
         currentPage: state.presentingPdfAttributes.currentPage,
-      })
-        .then(() => commit('setPresentPdfLoading', false));
+      });
+      commit('setPresentPdfLoading', false);
     },
     countNumPages({ commit }, payload) {
       return new Promise((resolve, reject) => {
@@ -308,17 +310,14 @@ export default new Vuex.Store({
             resumePage: state.uploadPdfAttributes.resumePage,
           })
             .then(() => {
-              commit('setUploadBuffer', {
-                path: `user/${state.uid}/${state.uploadPdfAttributes.title}`,
+              dispatch('uploadFile', {
+                title: state.uploadPdfAttributes.title,
                 file: payload,
-              })
-                .then(() => {
-                  dispatch('uploadFile');
-                })
-                .then(() => {
-                  dispatch('resetUploadPdfAttributes');
-                  commit('setSubmittingPdfs', false);
-                });
+              });
+            })
+            .then(() => {
+              dispatch('resetUploadPdfAttributes');
+              commit('setSubmittingPdfs', false);
             });
         }, error => alert(error));
     },
