@@ -19,7 +19,7 @@ firebase.initializeApp({
 });
 
 const DATABASE = 'pdf-list';
-var storageRef = firebase.storage().ref();
+const storageRef = firebase.storage().ref();
 
 export default new Vuex.Store({
   state: {
@@ -46,7 +46,7 @@ export default new Vuex.Store({
       numPages: 0,
       resumePage: 1,
       title: '',
-    },    
+    },
     presentingPdfAttributes: {
       numPages: 0,
       currentPage: 1,
@@ -115,7 +115,6 @@ export default new Vuex.Store({
       state.uploadPdfAttributes.title = '';
       state.uploadPdfAttributes.numPages = 0;
       state.uploadPdfAttributes.resumePage = 1;
-
     },
     setUploadPdfAttributes(state, payload) {
       state.uploadPdfAttributes.title = payload.title;
@@ -130,10 +129,10 @@ export default new Vuex.Store({
       state.presentingPdfAttributes.pdfid = payload.pdfid;
     },
     setBufferedPdf(state, payload) {
-      state.bufferedPdf = payload
+      state.bufferedPdf = payload;
     },
     setUplodadingFile(state, payload) {
-      state.uplodadingFile = payload
+      state.uplodadingFile = payload;
     },
   },
   actions: {
@@ -192,7 +191,7 @@ export default new Vuex.Store({
           });
       });
     },
-    submitPresentingDataToFirebase({ commit, state }, payload) {
+    submitPresentingDataToFirebase({ commit }, payload) {
       return new Promise((resolve) => {
         commit('setSubmittingPresentingDataToFirebase', true);
         firebase
@@ -236,17 +235,17 @@ export default new Vuex.Store({
         .ref(`${DATABASE}/${state.uid}`)
         .update(updates)
         .then(() => commit('setDeletePdfLoading', false));
-    },    
-    uploadFile({ commit, state }, payload) {
+    },
+    uploadFile(payload) {
       return new Promise((resolve) => {
-        storageRef.child(payload.path).put(payload.file).then(function(snapshot) {
-          resolve()
+        storageRef.child(payload.path).put(payload.file).then(() => {
+          resolve();
         });
-      })        
+      });
     },
     presentPdf({ commit, state }, payload) {
       commit('setPresentPdfLoading', true);
-      pdfjsLib.getDocument(title).promise.then(function(pdf) {
+      pdfjsLib.getDocument(state.presentingPdfAttributes.title).promise.then((pdf) => {
         commit('setBufferedPdf', pdf);
       });
       commit('setPresentingPdfAttributes', {
@@ -255,23 +254,22 @@ export default new Vuex.Store({
         currentPage: payload.resumePage,
         uid: state.uid,
         pdfid: payload.pdfid,
-      }),
+      });
       commit('setSubmittingPresentingDataToFirebase', {
         title: state.presentingPdfAttributes.title,
         numPages: state.presentingPdfAttributes.numPages,
         currentPage: state.presentingPdfAttributes.currentPage,
       })
-      .then(() => commit('setPresentPdfLoading', false));
-
+        .then(() => commit('setPresentPdfLoading', false));
     },
     countNumPages({ commit }, payload) {
       return new Promise((resolve, reject) => {
         commit('setCountingNumPages', true);
-        var reader = new FileReader();
-        var success = 'countNumPages = success';
-        var error = 'zero pages';
+        const reader = new FileReader();
+        const success = 'countNumPages = success';
+        const error = 'zero pages';
         reader.onloadend = () => {
-          var loadingTask = pdfjsLib.getDocument({ data: reader.result });
+          const loadingTask = pdfjsLib.getDocument({ data: reader.result });
           loadingTask.promise.then((doc) => {
             commit('setUploadPdfAttributes', {
               title: payload.name,
@@ -300,10 +298,10 @@ export default new Vuex.Store({
                 file: payload,
               });
             })
-              .then(() => {
-                dispatch('resetUploadPdfAttributes');
-                commit('setSubmittingPdfs', false);
-              });
+            .then(() => {
+              dispatch('resetUploadPdfAttributes');
+              commit('setSubmittingPdfs', false);
+            });
         }, error => alert(error));
     },
     resetUploadPdfAttributes({ commit }) {
