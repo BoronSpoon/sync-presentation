@@ -42,6 +42,7 @@ export default new Vuex.Store({
     },
     bufferedPdf: '',
     uid: '',
+    url,
     pdfList: [],
     uploadBuffer: {
       title: '',
@@ -146,6 +147,9 @@ export default new Vuex.Store({
     },
     setUplodadingFile(state, payload) {
       state.uplodadingFile = payload;
+    },
+    setBufferedPdfAction(state, payload) {
+      state.bufferedPdf = payload;
     },
   },
   actions: {
@@ -256,24 +260,31 @@ export default new Vuex.Store({
         });
       });
     },
-    presentPdf({ commit, state }, payload) {
+    getDownloadURL(payload) {
+
+    },
+    presentPdf({ commit, state, dispatch }, payload) {
       commit('setPresentPdfLoading', true);
       pdfjsLib.getDocument(state.presentingPdfAttributes.title).promise.then((pdf) => {
-        commit('setBufferedPdf', pdf);
+        dispatch('setBufferedPdfAction', pdf)
+          .then(() => {
+            commit('setPresentingPdfAttributes', {
+              title: payload.title,
+              numPages: payload.numPages,
+              currentPage: payload.resumePage,
+              uid: state.uid,
+              pdfid: payload.pdfid,
+            });
+            dispatch('submitPresentingDataToFirebase', {
+              title: state.presentingPdfAttributes.title,
+              numPages: state.presentingPdfAttributes.numPages,
+              currentPage: state.presentingPdfAttributes.currentPage,
+            })
+              .then(() => {
+                commit('setPresentPdfLoading', false);
+              });
+          });
       });
-      commit('setPresentingPdfAttributes', {
-        title: payload.title,
-        numPages: payload.numPages,
-        currentPage: payload.resumePage,
-        uid: state.uid,
-        pdfid: payload.pdfid,
-      });
-      commit('setSubmittingPresentingDataToFirebase', {
-        title: state.presentingPdfAttributes.title,
-        numPages: state.presentingPdfAttributes.numPages,
-        currentPage: state.presentingPdfAttributes.currentPage,
-      });
-      commit('setPresentPdfLoading', false);
     },
     countNumPages({ commit }, payload) {
       return new Promise((resolve, reject) => {
