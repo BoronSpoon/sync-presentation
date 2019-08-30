@@ -249,9 +249,9 @@ export default new Vuex.Store({
         .update(updates)
         .then(() => commit('setDeletePdfLoading', false));
     },
-    uploadFile(payload) {
+    uploadFile({ state }, payload) {
       return new Promise((resolve) => {
-        storageRef.child(`${DATABASE}/${state.uid}/${payload.title}`).put(payload.file).then(() => {
+        storageRef.child(`user/${state.uid}/${payload.title}`).put(payload.file).then(() => {
           resolve();
         });
       });
@@ -313,11 +313,11 @@ export default new Vuex.Store({
               dispatch('uploadFile', {
                 title: state.uploadPdfAttributes.title,
                 file: payload,
-              });
-            })
-            .then(() => {
-              dispatch('resetUploadPdfAttributes');
-              commit('setSubmittingPdfs', false);
+              })
+                .then(() => {
+                  dispatch('resetUploadPdfAttributes');
+                  commit('setSubmittingPdfs', false);
+                });
             });
         }, error => alert(error));
     },
