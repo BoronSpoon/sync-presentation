@@ -7,6 +7,7 @@ import 'firebase/storage';
 import pdfjsLib from 'pdfjs-dist';
 
 Vue.use(Vuex);
+/* eslint-disable no-console */
 
 // firebase config.
 firebase.initializeApp({
@@ -42,7 +43,8 @@ export default new Vuex.Store({
     },
     bufferedPdf: '',
     uid: '',
-    url,
+    url: '',
+    file: '',
     pdfList: [],
     uploadBuffer: {
       title: '',
@@ -151,6 +153,12 @@ export default new Vuex.Store({
     setBufferedPdfAction(state, payload) {
       state.bufferedPdf = payload;
     },
+    setUrl(state, payload) {
+      state.url = payload;
+    },
+    setFile(state, payload) {
+      state.file = payload;
+    },
   },
   actions: {
     createNewUserAccount({ commit }, payload) {
@@ -177,7 +185,8 @@ export default new Vuex.Store({
     signInExistingUser({ commit }, payload) {
       return new Promise((resolve, reject) => {
         commit('beforeAuth');
-        // Sign-in the user details.
+        // Sign-in the user det
+        console.log(payload)
         firebase
           .auth()
           .signInWithEmailAndPassword(payload.email, payload.password)
@@ -260,31 +269,71 @@ export default new Vuex.Store({
         });
       });
     },
-    getDownloadURL(payload) {
-
+    uploadPresentingFile(payload) {
+      return new Promise((resolve) => {
+        storageRef.child(`presenting/${payload.title}`).put(payload.file).then(() => {
+          resolve();
+        });
+      });
+    },
+    downloadFile({ commit }, payload) {
+      return new Promise((resolve) => {
+        var xhr = new XMLHttpRequest();
+        xhr.responseType = 'blob';
+        xhr.onload = () => {
+          return xhr.response;
+        };
+        xhr.open('GET', payload);
+        xhr.send()
+          .then((response) => {
+            commit('setFile', response);
+            resolve();
+          });
+      });
+    },
+    getDownloadURL({ state, commit }, payload) {
+      return new Promise((resolve) => {
+        storageRef.child(payload).getDownloadURL().then((url) => {
+          commit('setUrl', url);
+          console.log(state.url)
+          resolve();
+        });
+      });
     },
     presentPdf({ commit, state, dispatch }, payload) {
       commit('setPresentPdfLoading', true);
-      pdfjsLib.getDocument(state.presentingPdfAttributes.title).promise.then((pdf) => {
-        dispatch('setBufferedPdfAction', pdf)
-          .then(() => {
-            commit('setPresentingPdfAttributes', {
-              title: payload.title,
-              numPages: payload.numPages,
-              currentPage: payload.resumePage,
-              uid: state.uid,
-              pdfid: payload.pdfid,
-            });
-            dispatch('submitPresentingDataToFirebase', {
-              title: state.presentingPdfAttributes.title,
-              numPages: state.presentingPdfAttributes.numPages,
-              currentPage: state.presentingPdfAttributes.currentPage,
-            })
+      dispatch('getDownloadURL', `user/${state.uid}/${payload.title}`)
+        .then(() => {
+          pdfjsLib.getDocument(state.url).promise.then((pdf) => {
+            dispatch('downloadFile', state.url)
               .then(() => {
-                commit('setPresentPdfLoading', false);
-              });
+                dispatch('uploadPresentingFile', {
+                  title: state.presentingPdfAttributes.title,
+                  file: state.file,
+                })
+                  .then(() => {
+                    dispatch('setBufferedPdfAction', pdf)
+                    .then(() => {
+                      commit('setPresentingPdfAttributes', {
+                        title: payload.title,
+                        numPages: payload.numPages,
+                        currentPage: payload.resumePage,
+                        uid: state.uid,
+                        pdfid: payload.pdfid,
+                      });
+                      dispatch('submitPresentingDataToFirebase', {
+                        title: state.presentingPdfAttributes.title,
+                        numPages: state.presentingPdfAttributes.numPages,
+                        currentPage: state.presentingPdfAttributes.currentPage,
+                      })
+                        .then(() => {
+                          commit('setPresentPdfLoading', false);
+                        });
+                    });  
+                  })
+              })
           });
-      });
+        });
     },
     countNumPages({ commit }, payload) {
       return new Promise((resolve, reject) => {
