@@ -13,7 +13,10 @@
     <v-row no-gutters>
       <v-col>
         <v-card tile center>
-
+          <pdf 
+            :src = url
+            :page = presentingPdfAttributes.currentPage
+          />
         </v-card>
       </v-col>
     </v-row>
@@ -47,11 +50,23 @@
 </template>
 
 <script>
+import pdf from 'pdfvuer'
 import { mapActions, mapState } from 'vuex';
 
 export default {
+  components: {
+    pdf
+  },
   created() {
     this.getAllPdfsForUser();
+    this.getPresentingData();
+    if (state.presentingPdfAttributes.title != payload.title) {
+      dispatch('getDownloadURL', `presenting`)
+        .then(() => {
+          commit('setAllPdfsLoading', false);
+          console.log(state.url, state.presentingPdfAttributes)
+        });
+    }
   },
   data: () => ({
   }),
@@ -59,11 +74,13 @@ export default {
     ...mapState([
       'presentingPdfAttributes',
       'bufferedPdf',
+      'url',
     ]),
   },
   methods: {
     ...mapActions([
       'getAllPdfsForUser',
+      'getPresentingData',
     ]),
   },
 };

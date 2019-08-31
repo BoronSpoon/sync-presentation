@@ -81,6 +81,7 @@ import { mapActions, mapState } from 'vuex';
 export default {
   created() {
     this.getAllPdfsForUser();
+    this.getPresentingData();
   },
   data: () => ({
     file: [],
@@ -105,6 +106,7 @@ export default {
     },
     ...mapActions([
       'getAllPdfsForUser',
+      'getPresentingData',
       'deletePdf',
       'presentPdf',
       'submitPdf',

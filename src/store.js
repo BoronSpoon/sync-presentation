@@ -219,25 +219,29 @@ export default new Vuex.Store({
           });
       });
     },
-    getAllPdfsForUser({ commit, state }) {
+    getAllPdfsForUser({ commit, state, dispatch }) {
       commit('setAllPdfsLoading', true);
       const PdfList = firebase
         .database()
         .ref(`${DATABASE}/${state.uid}`);
       PdfList.on('value', (data) => {
+        console.log(1)
         commit('setPdfList', data.val());
+      });
+    },
+    getPresentingData({ commit, state, dispatch }) {
       const PresentingData = firebase
         .database()
         .ref(`${DATABASE}/presenting`);
       PresentingData.on('value', (data) => {
-          payload = data.val();
-          commit('setPresentingPdfAttributes', {
-            title: payload.title,
-            numPages: payload.numPages,
-            currentPage: payload.resumePage,
-          });
-      });
-        commit('setAllPdfsLoading', false);
+        const payload = data.val()
+        console.log(2)
+        commit('setPresentingPdfAttributes', {
+          title: payload.title,
+          numPages: payload.numPages,
+          currentPage: payload.resumePage,
+        });
+        console.log(state.url, state.presentingPdfAttributes, payload.title)
       });
     },
     getCurrentUser({ commit }) {
