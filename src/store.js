@@ -219,7 +219,7 @@ export default new Vuex.Store({
         firebase
           .database()
           .ref(`${DATABASE}/presenting`)
-          .updateChidrenAsync(payload)
+          .push(payload)
           .then((snap) => {
             console.log(snap.key)
             commit('setSubmittingPresentingDataToFirebase', false);
