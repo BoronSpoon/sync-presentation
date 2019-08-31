@@ -108,8 +108,7 @@ export default new Vuex.Store({
       state.loadings.submittingPdfs = data;
     },
     beforeAuth(state) {
-      state.loadings.log
-      <v-icon>keyboard_arrow_right</v-icon>in = true;
+      state.loadings.login = true;
     },
     afterSuccessfulAuth(state, { name, email, uid }) {
       state.loadings.login = false;
