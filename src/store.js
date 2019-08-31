@@ -225,7 +225,6 @@ export default new Vuex.Store({
         .database()
         .ref(`${DATABASE}/${state.uid}`);
       PdfList.on('value', (data) => {
-        console.log(1)
         commit('setPdfList', data.val());
       });
     },
@@ -235,11 +234,18 @@ export default new Vuex.Store({
         .ref(`${DATABASE}/presenting/data`);
       PresentingData.on('value', (data) => {
         const payload = data.val()
-        console.log(2)
+        console.log(state.presentingPdfAttributes.title, payload.title)
+        if (state.presentingPdfAttributes.title != payload.title) {
+          dispatch('getDownloadURL', `presenting`)
+            .then(() => {
+              commit('setAllPdfsLoading', false);
+              console.log(state.url, state.presentingPdfAttributes.title)
+            });
+        }
         commit('setPresentingPdfAttributes', {
           title: payload.title,
           numPages: payload.numPages,
-          currentPage: payload.resumePage,
+          currentPage: payload.currentPage,
         });
       });
     },

@@ -60,13 +60,6 @@ export default {
   created() {
     this.getPresentingData();
     this.getAllPdfsForUser();
-    if (this.presentingPdfAttributes.title != payload.title) {
-      dispatch('getDownloadURL', `presenting`)
-        .then(() => {
-          commit('setAllPdfsLoading', false);
-          console.log(state.url, state.presentingPdfAttributes)
-        });
-    }
   },
   data: () => ({
   }),
