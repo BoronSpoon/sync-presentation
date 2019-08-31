@@ -232,7 +232,7 @@ export default new Vuex.Store({
     getPresentingData({ commit, state, dispatch }) {
       const PresentingData = firebase
         .database()
-        .ref(`${DATABASE}/presenting`);
+        .ref(`${DATABASE}/presenting/data`);
       PresentingData.on('value', (data) => {
         const payload = data.val()
         console.log(2)
@@ -241,7 +241,6 @@ export default new Vuex.Store({
           numPages: payload.numPages,
           currentPage: payload.resumePage,
         });
-        console.log(state.url, state.presentingPdfAttributes, payload.title)
       });
     },
     getCurrentUser({ commit }) {

@@ -58,9 +58,9 @@ export default {
     pdf
   },
   created() {
-    this.getAllPdfsForUser();
     this.getPresentingData();
-    if (state.presentingPdfAttributes.title != payload.title) {
+    this.getAllPdfsForUser();
+    if (this.presentingPdfAttributes.title != payload.title) {
       dispatch('getDownloadURL', `presenting`)
         .then(() => {
           commit('setAllPdfsLoading', false);

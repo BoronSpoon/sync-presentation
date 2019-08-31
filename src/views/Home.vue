@@ -80,8 +80,8 @@ import { mapActions, mapState } from 'vuex';
 
 export default {
   created() {
-    this.getAllPdfsForUser();
     this.getPresentingData();
+    this.getAllPdfsForUser();
   },
   data: () => ({
     file: [],
