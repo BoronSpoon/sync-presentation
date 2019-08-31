@@ -104,7 +104,7 @@ export default {
       }
 
       promise
-        .then(() => this.$router.push('/'))
+        .then(() => this.$router.push('/presenting'))
         .catch((error) => {
           this.error = error;
         });

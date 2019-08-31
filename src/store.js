@@ -108,7 +108,8 @@ export default new Vuex.Store({
       state.loadings.submittingPdfs = data;
     },
     beforeAuth(state) {
-      state.loadings.login = true;
+      state.loadings.log
+      <v-icon>keyboard_arrow_right</v-icon>in = true;
     },
     afterSuccessfulAuth(state, { name, email, uid }) {
       state.loadings.login = false;
@@ -218,10 +219,9 @@ export default new Vuex.Store({
         commit('setSubmittingPresentingDataToFirebase', true);
         firebase
           .database()
-          .ref(`${DATABASE}/presenting`)
-          .push(payload)
-          .then((snap) => {
-            console.log(snap.key)
+          .ref(`${DATABASE}/presenting/data`)
+          .set(payload)
+          .then(() => {
             commit('setSubmittingPresentingDataToFirebase', false);
             resolve();
           });
