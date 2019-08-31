@@ -150,9 +150,6 @@ export default new Vuex.Store({
     setUplodadingFile(state, payload) {
       state.uplodadingFile = payload;
     },
-    setBufferedPdfAction(state, payload) {
-      state.bufferedPdf = payload;
-    },
     setUrl(state, payload) {
       state.url = payload;
     },
@@ -186,7 +183,6 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         commit('beforeAuth');
         // Sign-in the user det
-        console.log(payload)
         firebase
           .auth()
           .signInWithEmailAndPassword(payload.email, payload.password)
@@ -223,8 +219,9 @@ export default new Vuex.Store({
         firebase
           .database()
           .ref(`${DATABASE}/presenting`)
-          .push(payload)
-          .then(() => {
+          .updateChidrenAsync(payload)
+          .then((snap) => {
+            console.log(snap.key)
             commit('setSubmittingPresentingDataToFirebase', false);
             resolve();
           });
@@ -269,25 +266,32 @@ export default new Vuex.Store({
         });
       });
     },
-    uploadPresentingFile(payload) {
+    uploadPresentingFile({ state }, payload) {
       return new Promise((resolve) => {
-        storageRef.child(`presenting/${payload.title}`).put(payload.file).then(() => {
+        storageRef.child(`presenting/${payload}`).put(state.file).then(() => {
           resolve();
         });
       });
     },
-    downloadFile({ commit }, payload) {
+    setFileAction({ commit }, payload) {
+      commit('setFile', payload)
+    },
+    downloadFile({ state, dispatch }, payload) {
       return new Promise((resolve) => {
-        var xhr = new XMLHttpRequest();
-        xhr.responseType = 'blob';
-        xhr.onload = () => {
-          return xhr.response;
-        };
-        xhr.open('GET', payload);
-        xhr.send()
+        return new Promise((resolve) => {
+          var xhr = new XMLHttpRequest();
+          xhr.responseType = 'blob';
+          xhr.onload = () => {
+            resolve(xhr.response);
+          };
+          xhr.open('GET', payload);
+          xhr.send()
+        })
           .then((response) => {
-            commit('setFile', response);
-            resolve();
+            dispatch('setFileAction', response)
+              .then(() => {
+                resolve();
+              })
           });
       });
     },
@@ -295,10 +299,12 @@ export default new Vuex.Store({
       return new Promise((resolve) => {
         storageRef.child(payload).getDownloadURL().then((url) => {
           commit('setUrl', url);
-          console.log(state.url)
           resolve();
         });
       });
+    },
+    setBufferedPdfAction({ commit }, payload) {
+      commit('setBufferedPdf', payload);
     },
     presentPdf({ commit, state, dispatch }, payload) {
       commit('setPresentPdfLoading', true);
@@ -307,10 +313,7 @@ export default new Vuex.Store({
           pdfjsLib.getDocument(state.url).promise.then((pdf) => {
             dispatch('downloadFile', state.url)
               .then(() => {
-                dispatch('uploadPresentingFile', {
-                  title: state.presentingPdfAttributes.title,
-                  file: state.file,
-                })
+                dispatch('uploadPresentingFile', payload.title)
                   .then(() => {
                     dispatch('setBufferedPdfAction', pdf)
                     .then(() => {
