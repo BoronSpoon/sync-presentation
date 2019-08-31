@@ -59,8 +59,6 @@ export default new Vuex.Store({
       numPages: 0,
       currentPage: 1,
       title: '',
-      uid: '',
-      pdfid: '',
     },
   },
   mutations: {
@@ -141,11 +139,6 @@ export default new Vuex.Store({
       state.presentingPdfAttributes.title = payload.title;
       state.presentingPdfAttributes.numPages = payload.numPages;
       state.presentingPdfAttributes.currentPage = payload.currentPage;
-      state.presentingPdfAttributes.uid = payload.uid;
-      state.presentingPdfAttributes.pdfid = payload.pdfid;
-    },
-    setBufferedPdf(state, payload) {
-      state.bufferedPdf = payload;
     },
     setUplodadingFile(state, payload) {
       state.uplodadingFile = payload;
@@ -233,6 +226,17 @@ export default new Vuex.Store({
         .ref(`${DATABASE}/${state.uid}`);
       PdfList.on('value', (data) => {
         commit('setPdfList', data.val());
+      const PresentingData = firebase
+        .database()
+        .ref(`${DATABASE}/presenting`);
+      PresentingData.on('value', (data) => {
+          payload = data.val();
+          commit('setPresentingPdfAttributes', {
+            title: payload.title,
+            numPages: payload.numPages,
+            currentPage: payload.resumePage,
+          });
+      });
         commit('setAllPdfsLoading', false);
       });
     },
@@ -302,39 +306,29 @@ export default new Vuex.Store({
         });
       });
     },
-    setBufferedPdfAction({ commit }, payload) {
-      commit('setBufferedPdf', payload);
-    },
     presentPdf({ commit, state, dispatch }, payload) {
       commit('setPresentPdfLoading', true);
       dispatch('getDownloadURL', `user/${state.uid}/${payload.title}`)
         .then(() => {
-          pdfjsLib.getDocument(state.url).promise.then((pdf) => {
-            dispatch('downloadFile', state.url)
-              .then(() => {
-                dispatch('uploadPresentingFile', payload.title)
-                  .then(() => {
-                    dispatch('setBufferedPdfAction', pdf)
-                    .then(() => {
-                      commit('setPresentingPdfAttributes', {
-                        title: payload.title,
-                        numPages: payload.numPages,
-                        currentPage: payload.resumePage,
-                        uid: state.uid,
-                        pdfid: payload.pdfid,
-                      });
-                      dispatch('submitPresentingDataToFirebase', {
-                        title: state.presentingPdfAttributes.title,
-                        numPages: state.presentingPdfAttributes.numPages,
-                        currentPage: state.presentingPdfAttributes.currentPage,
-                      })
-                        .then(() => {
-                          commit('setPresentPdfLoading', false);
-                        });
-                    });  
+          dispatch('downloadFile', state.url)
+            .then(() => {
+              dispatch('uploadPresentingFile', payload.title)
+                .then(() => {
+                  commit('setPresentingPdfAttributes', {
+                    title: payload.title,
+                    numPages: payload.numPages,
+                    currentPage: payload.resumePage,
+                  });
+                  dispatch('submitPresentingDataToFirebase', {
+                    title: state.presentingPdfAttributes.title,
+                    numPages: state.presentingPdfAttributes.numPages,
+                    currentPage: state.presentingPdfAttributes.currentPage,
                   })
-              })
-          });
+                    .then(() => {
+                      commit('setPresentPdfLoading', false);
+                    });
+                });  
+            })
         });
     },
     countNumPages({ commit }, payload) {
