@@ -34,7 +34,7 @@
     <v-row no-gutters class="primary">
       <v-col align="right">
         <v-card tile>
-          <v-btn>
+          <v-btn @click.stop="incrementPage(-1)">
             <v-icon>keyboard_arrow_left</v-icon>
           </v-btn>
         </v-card>
@@ -48,7 +48,7 @@
 
       <v-col align="left">
         <v-card tile>
-          <v-btn>
+          <v-btn @click.stop="incrementPage(1)">
             <v-icon>keyboard_arrow_right</v-icon>
           </v-btn>
         </v-card>
@@ -83,6 +83,7 @@ export default {
       'getAllPdfsForUser',
       'getPresentingData',
       'getPresentingTimestamp',
+      'incrementPage',
     ]),
   },
 };

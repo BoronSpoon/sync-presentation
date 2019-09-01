@@ -144,6 +144,9 @@ export default new Vuex.Store({
       state.presentingPdfAttributes.timestamp = payload.timestamp;
       state.presentingPdfAttributes.url = payload.url;
     },
+    setPresentingPdfPageIncrement(state, payload) {
+      state.presentingPdfAttributes.currentPage += payload;
+    },
     setUplodadingFile(state, payload) {
       state.uplodadingFile = payload;
     },
@@ -219,6 +222,17 @@ export default new Vuex.Store({
           .set(payload)
           .then(() => {
             commit('setSubmittingPresentingDataToFirebase', false);
+            resolve();
+          });
+      });
+    },    
+    submitPresentingPageToFirebase({ state }) {
+      return new Promise((resolve) => {
+        firebase
+          .database()
+          .ref(`${DATABASE}/presenting/data/currentPage`)
+          .set(state.presentingPdfAttributes.currentPage)
+          .then(() => {
             resolve();
           });
       });
@@ -346,6 +360,24 @@ export default new Vuex.Store({
                 });
             });
         });
+    },
+    incrementPage({ commit, state, dispatch }, payload) {
+      return new Promise((resolve) => {
+        if (payload === 1) {
+          if (state.presentingPdfAttributes.currentPage !== state.presentingPdfAttributes.numPages) {
+            commit('setPresentingPdfPageIncrement', 1)
+          }
+        }      
+        else if (payload === -1) {
+          if (state.presentingPdfAttributes.currentPage !== 1) {
+            commit('setPresentingPdfPageIncrement', -1)
+          }
+        }
+        dispatch('submitPresentingPageToFirebase')
+          .then(() => {
+            resolve();
+          });
+      });
     },
     countNumPages({ commit }, payload) {
       return new Promise((resolve, reject) => {
