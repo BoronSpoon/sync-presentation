@@ -26,6 +26,7 @@
           <pdf 
             :src = presentingPdfAttributes.url
             :page = presentingPdfAttributes.currentPage
+            style="display: inline-block; width: 80%"
           />
         </v-card>
       </v-col>

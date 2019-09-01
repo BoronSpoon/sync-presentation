@@ -26,6 +26,7 @@
           <pdf 
             :src = presentingPdfAttributes.url
             :page = presentingPdfAttributes.currentPage
+            style="display: inline-block; width: 80%"
           />
         </v-card>
       </v-col>
@@ -60,7 +61,7 @@
 </template>
 
 <script>
-import pdf from 'pdfvuer'
+import pdf from 'vue-pdf'
 import { mapActions, mapState } from 'vuex';
 
 export default {
