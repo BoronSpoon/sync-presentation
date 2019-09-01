@@ -8,7 +8,7 @@
 
       <v-col align="center">
         <v-card tile>
-          TITLE: <bold> {{ presentingPdfAttributes.title }} </bold>
+          TITLE: {{ presentingPdfAttributes.title }}
         </v-card>
       </v-col>
 
@@ -63,7 +63,6 @@ export default {
   },
   methods: {
     ...mapActions([
-      'getAllPdfsForUser',
       'getPresentingData',
     ]),
   },
