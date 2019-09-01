@@ -5,7 +5,7 @@
     <v-row no-gutters>
       <v-col align="center">
         <v-card tile>
-          TITLE: {{ presentingPdfAttributes.title }}, {{ url }}
+          TITLE: {{ presentingPdfAttributes.title }}, {{ presentingPdfAttributes.url }}
         </v-card>
       </v-col>
     </v-row>
@@ -14,7 +14,7 @@
       <v-col>
         <v-card tile align="center">
           <pdf 
-            :src = url
+            :src = presentingPdfAttrubutes.url
             :page = presentingPdfAttributes.currentPage
           />
         </v-card>
@@ -68,7 +68,6 @@ export default {
     ...mapState([
       'presentingPdfAttributes',
       'bufferedPdf',
-      'url',
     ]),
   },
   methods: {

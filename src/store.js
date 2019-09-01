@@ -60,6 +60,7 @@ export default new Vuex.Store({
       currentPage: 1,
       title: '',
       timestamp: '',
+      url: '',
     },
   },
   mutations: {
@@ -242,6 +243,7 @@ export default new Vuex.Store({
           numPages: payload.numPages,
           currentPage: payload.currentPage,
           timestamp: '',
+          url: payload.url,
         });
       });
     },
@@ -296,7 +298,7 @@ export default new Vuex.Store({
       });
     },
     setFileAction({ commit }, payload) {
-      commit('setFile', payload)
+      commit('setFile', payload);
     },
     downloadFile_({ state, dispatch }, payload) {
       return new Promise((resolve) => {
@@ -306,7 +308,7 @@ export default new Vuex.Store({
           resolve(xhr.response);
         };
         xhr.open('GET', payload);
-        xhr.send()
+        xhr.send();
       });
     },
     downloadFile({ state, dispatch }, payload) {
@@ -341,12 +343,14 @@ export default new Vuex.Store({
                     numPages: payload.numPages,
                     currentPage: payload.resumePage,
                     timestamp: '',
+                    url: state.url, 
                   });
                   dispatch('submitPresentingDataToFirebase', {
                     title: state.presentingPdfAttributes.title,
                     numPages: state.presentingPdfAttributes.numPages,
                     currentPage: state.presentingPdfAttributes.currentPage,
                     timestamp: new Date().toISOString(),
+                    url: state.presentingPdfAttributes.url,
                   })
                     .then(() => {
                       commit('setPresentPdfLoading', false);
