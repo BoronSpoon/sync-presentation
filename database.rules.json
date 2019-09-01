@@ -1,0 +1,22 @@
+{
+   "rules":{
+      "pdf-list":{
+         "presenting":{
+           // All registered users can access presenting data
+          	"data":{
+            	".read": "auth.uid != null",
+            	".write": "auth.uid != null",
+              ".validate":"newData.hasChildren(['title', 'numPages', 'currentPage']) && newData.child('title').isString() && newData.child('numPages').isNumber() && newData.child('currentPage').isNumber()"
+            }
+         },
+         "$user":{
+            // Only the logged in user can read and write to their todos.
+            ".read":"auth.uid === $user",
+            ".write":"auth.uid === $user",
+            "$pdf":{
+               ".validate":"newData.hasChildren(['title', 'numPages', 'resumePage']) && newData.child('title').isString() && newData.child('numPages').isNumber() && newData.child('resumePage').isNumber()"
+            }
+         }
+      }
+   }
+}
