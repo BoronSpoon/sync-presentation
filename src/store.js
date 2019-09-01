@@ -248,19 +248,6 @@ export default new Vuex.Store({
         });
       });
     },
-    getPresentingTimestamp({ dispatch }) {
-      return new Promise((resolve) => {
-        const PresentingTimestamp = firebase
-          .database()
-          .ref(`${DATABASE}/presenting/data/timestamp`);
-        PresentingTimestamp.on('value', () => {
-          dispatch('getDownloadURL', 'presenting')
-            .then(() => {
-              resolve();
-            });
-        });
-      });
-    },
     getCurrentUser({ commit }) {
       return new Promise((resolve, reject) => {
         const user = firebase.auth().currentUser;

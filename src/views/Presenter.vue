@@ -60,7 +60,6 @@ export default {
   created() {
     this.getAllPdfsForUser();
     this.getPresentingData();
-    const waitData = this.getPresentingTimestamp();
   },
   data: () => ({
   }),
