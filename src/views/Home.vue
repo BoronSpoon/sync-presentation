@@ -52,7 +52,6 @@ export default {
     pdf
   },
   created() {
-    this.getAllPdfsForUser();
     this.getPresentingData();
   },
   data: () => ({
@@ -60,14 +59,12 @@ export default {
   computed: {
     ...mapState([
       'presentingPdfAttributes',
-      'bufferedPdf',
     ]),
   },
   methods: {
     ...mapActions([
       'getAllPdfsForUser',
       'getPresentingData',
-      'getPresentingTimestamp',
     ]),
   },
 };

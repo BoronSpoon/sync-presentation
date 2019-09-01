@@ -5,6 +5,7 @@ import 'firebase/auth';
 import 'firebase/database';
 import 'firebase/storage';
 import pdfjsLib from 'pdfjs-dist';
+import router from './router';
 
 Vue.use(Vuex);
 /* eslint-disable no-console */
@@ -41,7 +42,6 @@ export default new Vuex.Store({
     status: {
       presentingPdf: false,
     },
-    bufferedPdf: '',
     uid: '',
     url: '',
     file: '',
@@ -341,6 +341,7 @@ export default new Vuex.Store({
                   })
                     .then(() => {
                       commit('setPresentPdfLoading', false);
+                      router.push('presenter');
                     });
                 });
             });

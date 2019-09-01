@@ -4,9 +4,19 @@
 
     <v-row no-gutters>
       <v-col align="center">
+        <v-btn to='/'>
+          exit
+          <v-icon>exit_to_app</v-icon>
+        </v-btn>
+      </v-col>
+
+      <v-col align="center">
         <v-card tile>
           TITLE: {{ presentingPdfAttributes.title }}
         </v-card>
+      </v-col>
+
+      <v-col align="center">
       </v-col>
     </v-row>
     
@@ -58,7 +68,6 @@ export default {
     pdf
   },
   created() {
-    this.getAllPdfsForUser();
     this.getPresentingData();
   },
   data: () => ({
