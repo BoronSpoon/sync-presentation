@@ -229,6 +229,7 @@ export default new Vuex.Store({
       PdfList.on('value', (data) => {
         commit('setPdfList', data.val());
       });
+      commit('setAllPdfsLoading', false);
     },
     getPresentingData({ commit, state, dispatch }) {
       const PresentingData = firebase
@@ -249,12 +250,12 @@ export default new Vuex.Store({
         const PresentingTimestamp = firebase
           .database()
           .ref(`${DATABASE}/presenting/data/timestamp`);
-        PresentingTimestamp.on('value', (data) => {
-          const payload = data.val()
-            dispatch('getDownloadURL', `presenting`)
-              .then(() => {
-                resolve();
-              });
+        PresentingTimestamp.on('value', () => {
+          dispatch('getDownloadURL', `presenting`)
+            .then((value) => {
+              console.log(value, state.url)
+              resolve();
+            });
         });
       });
     },
@@ -299,22 +300,20 @@ export default new Vuex.Store({
     },
     downloadFile({ state, dispatch }, payload) {
       return new Promise((resolve) => {
-        return new Promise((resolve) => {
-          var xhr = new XMLHttpRequest();
-          xhr.responseType = 'blob';
-          xhr.onload = () => {
-            resolve(xhr.response);
-          };
-          xhr.open('GET', payload);
-          xhr.send()
-        })
-          .then((response) => {
-            dispatch('setFileAction', response)
-              .then(() => {
-                resolve();
-              })
-          });
-      });
+        var xhr = new XMLHttpRequest();
+        xhr.responseType = 'blob';
+        xhr.onload = () => {
+          return xhr.response;
+        };
+        xhr.open('GET', payload);
+        xhr.send()
+      })
+        .then((response) => {
+          dispatch('setFileAction', response)
+            .then(() => {
+              resolve();
+            })
+        });
     },
     getDownloadURL({ state, commit }, payload) {
       return new Promise((resolve) => {
@@ -342,7 +341,7 @@ export default new Vuex.Store({
                     title: state.presentingPdfAttributes.title,
                     numPages: state.presentingPdfAttributes.numPages,
                     currentPage: state.presentingPdfAttributes.currentPage,
-                    timestamp: ,
+                    timestamp: new Date().toISOString(),
                   })
                     .then(() => {
                       commit('setPresentPdfLoading', false);

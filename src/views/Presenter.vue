@@ -5,14 +5,14 @@
     <v-row no-gutters>
       <v-col align="center">
         <v-card tile>
-          TITLE: {{ presentingPdfAttributes.title }}
+          TITLE: {{ presentingPdfAttributes.title }}, {{ url }}
         </v-card>
       </v-col>
     </v-row>
     
     <v-row no-gutters>
       <v-col>
-        <v-card tile center>
+        <v-card tile align="center">
           <pdf 
             :src = url
             :page = presentingPdfAttributes.currentPage
@@ -60,6 +60,7 @@ export default {
   created() {
     this.getPresentingData();
     this.getAllPdfsForUser();
+    const waitData = this.getPresentingTimestamp();
   },
   data: () => ({
   }),
@@ -74,6 +75,7 @@ export default {
     ...mapActions([
       'getAllPdfsForUser',
       'getPresentingData',
+      'getPresentingTimestamp',
     ]),
   },
 };
