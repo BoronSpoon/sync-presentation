@@ -361,7 +361,7 @@ export default new Vuex.Store({
               resumePage: 1,
             });
             commit('setCountingNumPages', false);
-            if (doc.numPages != 0) {
+            if (doc.numPages !== 0) {
               resolve(success);
             } else {
               reject(error);

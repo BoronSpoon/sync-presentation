@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Home from './views/Home.vue';
+import Selecter from './views/Selecter.vue';
 import Login from './views/Login.vue';
 import Presenter from './views/Presenter.vue';
 
@@ -12,6 +13,11 @@ export default new Router({
       path: '/',
       name: 'home',
       component: Home,
+    },
+    {
+      path: '/selecter',
+      name: 'selecter',
+      component: Selecter,
     },
     {
       path: '/login',

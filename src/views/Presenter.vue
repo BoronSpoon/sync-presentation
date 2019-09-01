@@ -5,7 +5,7 @@
     <v-row no-gutters>
       <v-col align="center">
         <v-card tile>
-          TITLE: {{ presentingPdfAttributes.title }}, {{ presentingPdfAttributes.url }}
+          TITLE: {{ presentingPdfAttributes.title }}
         </v-card>
       </v-col>
     </v-row>
