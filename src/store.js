@@ -59,6 +59,7 @@ export default new Vuex.Store({
       numPages: 0,
       currentPage: 1,
       title: '',
+      timestamp: '',
     },
   },
   mutations: {
@@ -139,6 +140,7 @@ export default new Vuex.Store({
       state.presentingPdfAttributes.title = payload.title;
       state.presentingPdfAttributes.numPages = payload.numPages;
       state.presentingPdfAttributes.currentPage = payload.currentPage;
+      state.presentingPdfAttributes.timestamp = payload.timestamp;
     },
     setUplodadingFile(state, payload) {
       state.uplodadingFile = payload;
@@ -234,18 +236,25 @@ export default new Vuex.Store({
         .ref(`${DATABASE}/presenting/data`);
       PresentingData.on('value', (data) => {
         const payload = data.val()
-        console.log(state.presentingPdfAttributes.title, payload.title)
-        if (state.presentingPdfAttributes.title != payload.title) {
-          dispatch('getDownloadURL', `presenting`)
-            .then(() => {
-              commit('setAllPdfsLoading', false);
-              console.log(state.url, state.presentingPdfAttributes.title)
-            });
-        }
         commit('setPresentingPdfAttributes', {
           title: payload.title,
           numPages: payload.numPages,
           currentPage: payload.currentPage,
+          timestamp: '',
+        });
+      });
+    },
+    getPresentingTimestamp({ commit, state, dispatch }) {
+      return new Promise((resolve) => {
+        const PresentingTimestamp = firebase
+          .database()
+          .ref(`${DATABASE}/presenting/data/timestamp`);
+        PresentingTimestamp.on('value', (data) => {
+          const payload = data.val()
+            dispatch('getDownloadURL', `presenting`)
+              .then(() => {
+                resolve();
+              });
         });
       });
     },
@@ -327,11 +336,13 @@ export default new Vuex.Store({
                     title: payload.title,
                     numPages: payload.numPages,
                     currentPage: payload.resumePage,
+                    timestamp: '',
                   });
                   dispatch('submitPresentingDataToFirebase', {
                     title: state.presentingPdfAttributes.title,
                     numPages: state.presentingPdfAttributes.numPages,
                     currentPage: state.presentingPdfAttributes.currentPage,
+                    timestamp: ,
                   })
                     .then(() => {
                       commit('setPresentPdfLoading', false);
