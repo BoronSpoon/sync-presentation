@@ -4,7 +4,7 @@
 
     <v-row no-gutters>
       <v-col align="center">
-        <v-btn to='/'>
+        <v-btn to='/selecter'>
           exit
           <v-icon>exit_to_app</v-icon>
         </v-btn>
