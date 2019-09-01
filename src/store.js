@@ -237,7 +237,7 @@ export default new Vuex.Store({
         .database()
         .ref(`${DATABASE}/presenting/data`);
       PresentingData.on('value', (data) => {
-        const payload = data.val()
+        const payload = data.val();
         commit('setPresentingPdfAttributes', {
           title: payload.title,
           numPages: payload.numPages,
@@ -311,7 +311,7 @@ export default new Vuex.Store({
         xhr.send();
       });
     },
-    downloadFile({ state, dispatch }, payload) {
+    downloadFile({ dispatch }, payload) {
       return new Promise((resolve) => {
         dispatch('downloadFile_')
           .then((response) => {
@@ -322,7 +322,7 @@ export default new Vuex.Store({
           });
       });
     },
-    getDownloadURL({ state, commit }, payload) {
+    getDownloadURL({ commit }, payload) {
       return new Promise((resolve) => {
         storageRef.child(payload).getDownloadURL().then((url) => {
           commit('setUrl', url);
@@ -343,7 +343,7 @@ export default new Vuex.Store({
                     numPages: payload.numPages,
                     currentPage: payload.resumePage,
                     timestamp: '',
-                    url: state.url, 
+                    url: state.url,
                   });
                   dispatch('submitPresentingDataToFirebase', {
                     title: state.presentingPdfAttributes.title,

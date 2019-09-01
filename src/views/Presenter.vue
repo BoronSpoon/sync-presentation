@@ -14,7 +14,7 @@
       <v-col>
         <v-card tile align="center">
           <pdf 
-            :src = presentingPdfAttrubutes.url
+            :src = presentingPdfAttributes.url
             :page = presentingPdfAttributes.currentPage
           />
         </v-card>
