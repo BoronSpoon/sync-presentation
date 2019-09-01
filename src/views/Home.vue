@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import pdf from 'pdfvuer'
+import pdf from 'vue-pdf'
 import { mapActions, mapState } from 'vuex';
 
 export default {
