@@ -298,22 +298,27 @@ export default new Vuex.Store({
     setFileAction({ commit }, payload) {
       commit('setFile', payload)
     },
-    downloadFile({ state, dispatch }, payload) {
+    downloadFile_({ state, dispatch }, payload) {
       return new Promise((resolve) => {
-        var xhr = new XMLHttpRequest();
+        const xhr = new XMLHttpRequest();
         xhr.responseType = 'blob';
         xhr.onload = () => {
-          return xhr.response;
+          resolve(xhr.response);
         };
         xhr.open('GET', payload);
         xhr.send()
-      })
-        .then((response) => {
-          dispatch('setFileAction', response)
-            .then(() => {
-              resolve();
-            })
-        });
+      });
+    },
+    downloadFile({ state, dispatch }, payload) {
+      return new Promise((resolve) => {
+        dispatch('downloadFile_')
+          .then((response) => {
+            dispatch('setFileAction', response)
+              .then(() => {
+                resolve();
+              });
+          });
+      });
     },
     getDownloadURL({ state, commit }, payload) {
       return new Promise((resolve) => {
@@ -347,7 +352,7 @@ export default new Vuex.Store({
                       commit('setPresentPdfLoading', false);
                     });
                 });  
-            })
+            });
         });
     },
     countNumPages({ commit }, payload) {
