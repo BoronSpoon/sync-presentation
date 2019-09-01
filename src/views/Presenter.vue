@@ -58,8 +58,8 @@ export default {
     pdf
   },
   created() {
-    this.getPresentingData();
     this.getAllPdfsForUser();
+    this.getPresentingData();
     const waitData = this.getPresentingTimestamp();
   },
   data: () => ({

@@ -142,6 +142,7 @@ export default new Vuex.Store({
       state.presentingPdfAttributes.numPages = payload.numPages;
       state.presentingPdfAttributes.currentPage = payload.currentPage;
       state.presentingPdfAttributes.timestamp = payload.timestamp;
+      state.presentingPdfAttributes.url = payload.url;
     },
     setUplodadingFile(state, payload) {
       state.uplodadingFile = payload;
@@ -222,7 +223,7 @@ export default new Vuex.Store({
           });
       });
     },
-    getAllPdfsForUser({ commit, state, dispatch }) {
+    getAllPdfsForUser({ commit, state }) {
       commit('setAllPdfsLoading', true);
       const PdfList = firebase
         .database()
@@ -232,7 +233,7 @@ export default new Vuex.Store({
       });
       commit('setAllPdfsLoading', false);
     },
-    getPresentingData({ commit, state, dispatch }) {
+    getPresentingData({ commit }) {
       const PresentingData = firebase
         .database()
         .ref(`${DATABASE}/presenting/data`);
@@ -247,15 +248,14 @@ export default new Vuex.Store({
         });
       });
     },
-    getPresentingTimestamp({ commit, state, dispatch }) {
+    getPresentingTimestamp({ dispatch }) {
       return new Promise((resolve) => {
         const PresentingTimestamp = firebase
           .database()
           .ref(`${DATABASE}/presenting/data/timestamp`);
         PresentingTimestamp.on('value', () => {
-          dispatch('getDownloadURL', `presenting`)
-            .then((value) => {
-              console.log(value, state.url)
+          dispatch('getDownloadURL', 'presenting')
+            .then(() => {
               resolve();
             });
         });
@@ -300,7 +300,7 @@ export default new Vuex.Store({
     setFileAction({ commit }, payload) {
       commit('setFile', payload);
     },
-    downloadFile_({ state, dispatch }, payload) {
+    downloadFile1(payload) {
       return new Promise((resolve) => {
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'blob';
@@ -311,9 +311,9 @@ export default new Vuex.Store({
         xhr.send();
       });
     },
-    downloadFile({ dispatch }, payload) {
+    downloadFile({ dispatch }) {
       return new Promise((resolve) => {
-        dispatch('downloadFile_')
+        dispatch('downloadFile1')
           .then((response) => {
             dispatch('setFileAction', response)
               .then(() => {
@@ -355,7 +355,7 @@ export default new Vuex.Store({
                     .then(() => {
                       commit('setPresentPdfLoading', false);
                     });
-                });  
+                });
             });
         });
     },
@@ -403,7 +403,7 @@ export default new Vuex.Store({
                   commit('setSubmittingPdfs', false);
                 });
             });
-        }, error => alert(error));
+        }, error => console.error(error));
     },
     resetUploadPdfAttributes({ commit }) {
       commit('resetUploadPdfAttributes');
