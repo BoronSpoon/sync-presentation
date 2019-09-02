@@ -54,6 +54,7 @@ export default {
   },
   created() {
     this.getPresentingData();
+    console.log('fire')
   },
   data: () => ({
   }),

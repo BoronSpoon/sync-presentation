@@ -71,7 +71,7 @@ export default {
   created() {
     this.setIsFirstAction(true);
     this.getPresentingData();
-    this.getTimestamp();
+    this.getUrl();
     this.setIsFirstAction(false);
   },
   data: () => ({
@@ -85,7 +85,7 @@ export default {
   methods: {
     ...mapActions([
       'getAllPdfsForUser',
-      'getTimestamp',
+      'getUrl',
       'getPresentingData',
       'getPresentingTimestamp',
       'incrementPage',

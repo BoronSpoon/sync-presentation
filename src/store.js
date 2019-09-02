@@ -45,7 +45,7 @@ export default new Vuex.Store({
     uid: '',
     url: '',
     file: '',
-    isFirst: '',
+    isFirst: false,
     pdfList: [],
     uploadBuffer: {
       title: '',
@@ -251,12 +251,14 @@ export default new Vuex.Store({
       });
       commit('setAllPdfsLoading', false);
     },
-    getTimestamp({ state }) {
-      const Timestamp = firebase
+    getUrl({ state }) {
+      const Url = firebase
         .database()
-        .ref(`${DATABASE}/presenting/data/timestamp`);
-      Timestamp.on('value', () => {
-        if (state.isFirst !== true) router.push('home');
+        .ref(`${DATABASE}/presenting/data/url`);
+      Url.on('value', () => {
+        if (state.isFirst === false) {
+          router.push('/');
+        }
       });
     },
     getPresentingData({ commit }) {
