@@ -257,7 +257,9 @@ export default new Vuex.Store({
         .ref(`${DATABASE}/presenting/data/url`);
       Url.on('value', () => {
         if (state.isFirst === false) {
-          router.push('/');
+          setTimeout(() => {
+            router.push('/');
+          }, 500);
         }
       });
     },
