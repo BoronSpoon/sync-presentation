@@ -229,7 +229,7 @@ export default new Vuex.Store({
             resolve();
           });
       });
-    },    
+    },
     submitPresentingPageToFirebase({ state }) {
       return new Promise((resolve) => {
         firebase
@@ -257,9 +257,7 @@ export default new Vuex.Store({
         .ref(`${DATABASE}/presenting/data/url`);
       Url.on('value', () => {
         if (state.isFirst === false) {
-          setTimeout(() => {
-            router.push('/');
-          }, 500);
+          router.push('/');
         }
       });
     },
