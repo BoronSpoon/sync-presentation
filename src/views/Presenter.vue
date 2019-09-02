@@ -24,7 +24,7 @@
       <v-col>
         <v-card tile align="center">
           <pdf 
-            :src = presentingPdfAttributes.url
+            :src = pdf.createLoadingTask(presentingPdfAttributes.url)
             :page = presentingPdfAttributes.currentPage
             style="display: inline-block; width: 80%"
           />
@@ -71,7 +71,7 @@ export default {
   created() {
     this.setIsFirstAction(true);
     this.getPresentingData();
-    this.getUrl();
+    this.getTimestamp();
     this.setIsFirstAction(false);
   },
   data: () => ({
@@ -79,15 +79,12 @@ export default {
   computed: {
     ...mapState([
       'presentingPdfAttributes',
-      'bufferedPdf',
     ]),
   },
   methods: {
     ...mapActions([
-      'getAllPdfsForUser',
-      'getUrl',
+      'getTimestamp',
       'getPresentingData',
-      'getPresentingTimestamp',
       'incrementPage',
       'setIsFirstAction',
     ]),

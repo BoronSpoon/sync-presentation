@@ -24,7 +24,7 @@
       <v-col>
         <v-card tile align="center">
           <pdf 
-            :src = presentingPdfAttributes.url
+            :src = pdf.createLoadingTask(presentingPdfAttributes.url)
             :page = presentingPdfAttributes.currentPage
             style="display: inline-block; width: 80%"
           />

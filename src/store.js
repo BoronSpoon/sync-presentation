@@ -251,13 +251,13 @@ export default new Vuex.Store({
       });
       commit('setAllPdfsLoading', false);
     },
-    getUrl({ state }) {
-      const Url = firebase
+    getTimestamp({ state }) {
+      const Timestamp = firebase
         .database()
-        .ref(`${DATABASE}/presenting/data/url`);
-      Url.on('value', () => {
+        .ref(`${DATABASE}/presenting/data/timestamp`);
+      Timestamp.on('value', () => {
         if (state.isFirst === false) {
-          router.push('/');
+          router.replace('/');
         }
       });
     },
