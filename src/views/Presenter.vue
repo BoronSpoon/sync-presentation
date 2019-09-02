@@ -70,6 +70,7 @@ export default {
   },
   created() {
     this.getPresentingData();
+    this.getTimestamp();
   },
   data: () => ({
   }),
@@ -82,6 +83,7 @@ export default {
   methods: {
     ...mapActions([
       'getAllPdfsForUser',
+      'getTimestamp',
       'getPresentingData',
       'getPresentingTimestamp',
       'incrementPage',

@@ -247,6 +247,14 @@ export default new Vuex.Store({
       });
       commit('setAllPdfsLoading', false);
     },
+    getTimestamp() {
+      const Timestamp = firebase
+        .database()
+        .ref(`${DATABASE}/presenting/data/timestamp`);
+      Timestamp.on('value', () => {
+        router.push('home');
+      });
+    },
     getPresentingData({ commit }) {
       const PresentingData = firebase
         .database()
