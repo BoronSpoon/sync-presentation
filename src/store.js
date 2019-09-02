@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import firebase from 'firebase/app';
+import pdf from 'vue-pdf';
 import 'firebase/auth';
 import 'firebase/database';
 import 'firebase/storage';
@@ -272,7 +273,7 @@ export default new Vuex.Store({
           numPages: payload.numPages,
           currentPage: payload.currentPage,
           timestamp: '',
-          url: payload.url,
+          url: pdf.createLoadingTask(payload.url),
         });
       });
     },
