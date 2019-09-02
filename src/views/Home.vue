@@ -52,7 +52,7 @@ export default {
   components: {
     pdf
   },
-  mounted() {
+  created() {
     this.getPresentingData();
   },
   data: () => ({

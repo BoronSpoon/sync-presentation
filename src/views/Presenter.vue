@@ -72,7 +72,7 @@ export default {
     this.setIsFirstAction(true);
     this.getPresentingData();
     this.getTimestamp();
-    this.submitFakePresentingPageToFirebase();
+    this.submitFakePresentingPageToFirebase().then(() => {});
     this.setIsFirstAction(false);
   },
   data: () => ({

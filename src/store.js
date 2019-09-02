@@ -241,26 +241,19 @@ export default new Vuex.Store({
             resolve();
           });
       });
-    },    
-    submitFakePresentingPageToFirebase1() {
+    },
+    submitFakePresentingPageToFirebase({ state }) {
       return new Promise((resolve) => {
+        const prevPage = state.presentingPdfAttributes.currentPage;
         firebase
           .database()
           .ref(`${DATABASE}/presenting/data/currentPage`)
           .set(0)
           .then(() => {
-            resolve();
-          });
-      });
-    },
-    submitFakePresentingPageToFirebase({ state, dispatch }) {
-      return new Promise((resolve) => {
-        dispatch('submitFakePresentingPageToFirebase1')
-          .then(() => {
             firebase
               .database()
               .ref(`${DATABASE}/presenting/data/currentPage`)
-              .set(state.presentingPdfAttributes.currentPage)
+              .set(prevPage)
               .then(() => {
                 resolve();
               });
