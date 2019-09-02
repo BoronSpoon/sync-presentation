@@ -69,8 +69,10 @@ export default {
     pdf
   },
   created() {
+    this.setIsFirstAction(true);
     this.getPresentingData();
     this.getTimestamp();
+    this.setIsFirstAction(false);
   },
   data: () => ({
   }),
@@ -87,6 +89,7 @@ export default {
       'getPresentingData',
       'getPresentingTimestamp',
       'incrementPage',
+      'setIsFirstAction',
     ]),
   },
 };

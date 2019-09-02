@@ -45,6 +45,7 @@ export default new Vuex.Store({
     uid: '',
     url: '',
     file: '',
+    isFirst: '',
     pdfList: [],
     uploadBuffer: {
       title: '',
@@ -156,6 +157,9 @@ export default new Vuex.Store({
     setFile(state, payload) {
       state.file = payload;
     },
+    setIsFirst(state, payload) {
+      state.isFirst = payload;
+    },
   },
   actions: {
     createNewUserAccount({ commit }, payload) {
@@ -247,12 +251,12 @@ export default new Vuex.Store({
       });
       commit('setAllPdfsLoading', false);
     },
-    getTimestamp() {
+    getTimestamp({ state }) {
       const Timestamp = firebase
         .database()
         .ref(`${DATABASE}/presenting/data/timestamp`);
       Timestamp.on('value', () => {
-        router.push('home');
+        if (state.isFirst !== true) router.push('home');
       });
     },
     getPresentingData({ commit }) {
@@ -373,12 +377,12 @@ export default new Vuex.Store({
       return new Promise((resolve) => {
         if (payload === 1) {
           if (state.presentingPdfAttributes.currentPage !== state.presentingPdfAttributes.numPages) {
-            commit('setPresentingPdfPageIncrement', 1)
+            commit('setPresentingPdfPageIncrement', 1);
           }
-        }      
+        }
         else if (payload === -1) {
           if (state.presentingPdfAttributes.currentPage !== 1) {
-            commit('setPresentingPdfPageIncrement', -1)
+            commit('setPresentingPdfPageIncrement', -1);
           }
         }
         dispatch('submitPresentingPageToFirebase')
@@ -435,6 +439,9 @@ export default new Vuex.Store({
     },
     resetUploadPdfAttributes({ commit }) {
       commit('resetUploadPdfAttributes');
+    },
+    setIsFirstAction({ commit }, payload) {
+      commit('setIsFirst', payload);
     },
   },
 });
