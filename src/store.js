@@ -241,6 +241,31 @@ export default new Vuex.Store({
             resolve();
           });
       });
+    },    
+    submitFakePresentingPageToFirebase1() {
+      return new Promise((resolve) => {
+        firebase
+          .database()
+          .ref(`${DATABASE}/presenting/data/currentPage`)
+          .set(0)
+          .then(() => {
+            resolve();
+          });
+      });
+    },
+    submitFakePresentingPageToFirebase({ state, dispatch }) {
+      return new Promise((resolve) => {
+        dispatch('submitFakePresentingPageToFirebase1')
+          .then(() => {
+            firebase
+              .database()
+              .ref(`${DATABASE}/presenting/data/currentPage`)
+              .set(state.presentingPdfAttributes.currentPage)
+              .then(() => {
+                resolve();
+              });
+          });
+      });
     },
     getAllPdfsForUser({ commit, state }) {
       commit('setAllPdfsLoading', true);

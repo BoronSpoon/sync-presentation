@@ -68,10 +68,11 @@ export default {
   components: {
     pdf
   },
-  created() {
+  mounted() {
     this.setIsFirstAction(true);
     this.getPresentingData();
     this.getTimestamp();
+    this.submitFakePresentingPageToFirebase();
     this.setIsFirstAction(false);
   },
   data: () => ({
@@ -85,6 +86,7 @@ export default {
     ...mapActions([
       'getTimestamp',
       'getPresentingData',
+      'submitFakePresentingPageToFirebase',
       'incrementPage',
       'setIsFirstAction',
     ]),
