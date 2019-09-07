@@ -37,13 +37,6 @@
             label="Enter your password"
             required
           ></v-text-field>
-          <v-text-field
-            v-if="newUser"
-            v-model="key"
-            :counter="10"
-            label="KEYWORD"
-            required
-          ></v-text-field>
           <v-btn
             type="submit"
             color="success"
@@ -102,14 +95,10 @@ export default {
         email: this.email,
         password: this.password,
       };
-      const registerPayload = {
-        email: this.email.concat(":Key=".concat(this.key)),
-        password: this.password,
-      };
       if (this.newUser) {
         promise = this.register({
           name: this.name,
-          ...registerPayload,
+          ...loginPayload,
         });
       } else {
         promise = this.login(loginPayload);
