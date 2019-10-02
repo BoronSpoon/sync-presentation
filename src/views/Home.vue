@@ -39,7 +39,6 @@ export default {
     pdf
   },
   created() {
-    this.getPresentingData();
   },
   data: () => ({
   }),
@@ -51,7 +50,6 @@ export default {
   },
   methods: {
     ...mapActions([
-      'getPresentingData',
       'getCurrentUser',
     ]),
   },

@@ -146,6 +146,7 @@ export default new Vuex.Store({
       state.presentingPdfAttributes.currentPage = payload.currentPage;
       state.presentingPdfAttributes.timestamp = payload.timestamp;
       state.presentingPdfAttributes.url = payload.url;
+      state.presentingPdfAttributes.id = payload.id;
     },
     setPresentingPdfPageIncrement(state, payload) {
       state.presentingPdfAttributes.currentPage += payload;
@@ -281,18 +282,19 @@ export default new Vuex.Store({
         }
       });
     },
-    getPresentingData({ commit }) {
+    getPresentingData({ commit }, payload) {
       const PresentingData = firebase
         .database()
-        .ref(`${DATABASE}/presenting/data`);
+        .ref(`${DATABASE}/presenting/data/${payload}`);
       PresentingData.on('value', (data) => {
-        const payload = data.val();
+        const value = data.val();
         commit('setPresentingPdfAttributes', {
-          title: payload.title,
-          numPages: payload.numPages,
-          currentPage: payload.currentPage,
+          title: value.title,
+          numPages: value.numPages,
+          currentPage: value.currentPage,
           timestamp: '',
-          url: pdf.createLoadingTask(payload.url),
+          url: pdf.createLoadingTask(value.url),
+          id: value.id,
         });
       });
     },
@@ -364,15 +366,20 @@ export default new Vuex.Store({
           resolve();
         });
       });
-    },    
+    },
     getUniqueId() {
       return new Promise((resolve) => {
-        while(true){
+        while (true) {
           const retVal = Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
-          if (retVal in ){
-            resolve(retVal);
-          }
-        }        
+          firebase
+            .database()
+            .ref(`${DATABASE}/presenting/id/${retVal}`)
+            .once('value', (snapshot) => {
+              if (snapshot.exists() === false) {
+                resolve(retVal);
+              }
+            });
+        }
       });
     },
     presentPdf({ commit, state, dispatch }, payload) {
@@ -394,7 +401,7 @@ export default new Vuex.Store({
                         id: uniqueid,
                       });
                       dispatch('submitPresentingDataToFirebase', {
-                        values: {
+                        value: {
                           title: state.presentingPdfAttributes.title,
                           numPages: state.presentingPdfAttributes.numPages,
                           currentPage: state.presentingPdfAttributes.currentPage,

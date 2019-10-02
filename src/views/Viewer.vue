@@ -54,14 +54,14 @@ export default {
     pdf
   },
   created() {
-    this.getPresentingData();
+    this.getPresentingData(this.pdfid);
   },
   data: () => ({
   }),
   computed: {
     ...mapState([
       'presentingPdfAttributes',
-      'id',
+      'pdfid',
     ]),
   },
   methods: {

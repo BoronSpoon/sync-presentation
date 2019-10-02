@@ -123,7 +123,6 @@ export default {
     },
     ...mapActions([
       'getAllPdfsForUser',
-      'getPresentingData',
       'deletePdf',
       'presentPdf',
       'submitPdf',
