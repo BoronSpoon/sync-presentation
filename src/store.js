@@ -386,17 +386,15 @@ export default new Vuex.Store({
             });
         }
       });
-    }, 
+    },
     idExists(payload) {
       return new Promise((resolve) => {
         firebase
           .database()
-          .ref(`${DATABASE}/presenting/id/${retVal}`)
+          .ref(`${DATABASE}/presenting/data/${payload}`)
           .once('value', (snapshot) => {
-            if (snapshot.exists() === false) {
-              resolve(retVal);
-            }
-          })
+            resolve(snapshot.exists());
+          });
       });
     },
     setPresentIdAction({ commit, dispatch }, payload) {
