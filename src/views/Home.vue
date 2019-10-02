@@ -23,11 +23,11 @@
           :lazy-validation="lazy"
         >
           <v-text-field
-            v-model="presentid"
+            v-model="tempPresentId"
             :counter="10"
             :rules="nameRules"
             label="Name"
-            required
+            @click="setPresentIdAction.then(() => {})"
           ></v-text-field>
         </v-form>
       </v-col>
@@ -61,6 +61,7 @@ export default {
   created() {
   },
   data: () => ({
+    tempPresentId
   }),
   computed: {
     ...mapState([
@@ -70,6 +71,7 @@ export default {
   methods: {
     ...mapActions([
       'getCurrentUser',
+      'setPresentIdAction',
     ]),
   },
 };

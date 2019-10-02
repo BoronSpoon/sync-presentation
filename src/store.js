@@ -398,11 +398,18 @@ export default new Vuex.Store({
       });
     },
     setPresentIdAction({ commit, dispatch }, payload) {
-      dispatch('idExists', payload)
-        .then((ret) => {
-          if (ret) commit('setPresentingId', payload);
-          else alert("presenting id doesn't exist! Try again.")
-        });
+      return new Promise((resolve) => {
+        dispatch('idExists', payload)
+          .then((ret) => {
+            if (ret) {
+              commit('setPresentId', payload);
+              router.push(`{name:'viewer',params:{id:${payload}}}`);
+            } else {
+              alert('session id does not exist! try again.');
+            }
+            resolve();
+          });
+      });
     },
     presentPdf({ commit, state, dispatch }, payload) {
       commit('setPresentPdfLoading', true);
@@ -434,7 +441,7 @@ export default new Vuex.Store({
                       })
                         .then(() => {
                           commit('setPresentPdfLoading', false);
-                          router.push("{name:'viewer',params:{id:this.id}}");
+                          router.push(`{name:'viewer',params:{id:${state.presentingPdfAttributes.id}}}`);
                         });
                     });
                 });
