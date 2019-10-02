@@ -27,7 +27,7 @@
             type="submit"
             color="success"
             :disabled="!valid"
-            @click="setPresentIdAction(tempPresentId).then(() => {})">
+            @click="setPresentIdAction(tempPresentId)">
           Submit
           </v-btn>
         </v-col>
@@ -79,7 +79,7 @@ export default {
   },
   data: () => ({
     valid: false,
-    tempPresentId: 0,
+    tempPresentId: '',
     idRules: [
       v => !!v || 'id is required',
       v => v.length == 6 || 'id must be 6 characters',

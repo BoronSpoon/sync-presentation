@@ -4,7 +4,7 @@
 
     <v-row no-gutters>
       <v-col align="center">
-        PDF ID: <bold>{{ id }}</bold>
+        PDF ID: {{ presentid }}
       </v-col>
 
       <v-col align="center">
@@ -14,7 +14,7 @@
       </v-col>
 
       <v-col align="center">
-        <v-btn v-on:click="getCurrentUser().then(() => this.$router.push('/selecter')).catch(() => this.$router.push('/login'));">
+        <v-btn v-on:click="getCurrentUser().then(() => $router.push('/selecter')).catch(() => $router.push('/login'));">
           present YOUR Pdf files
           <v-icon>picture_as_pdf</v-icon>
         </v-btn>
