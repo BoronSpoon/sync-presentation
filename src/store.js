@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 import Vue from 'vue';
 import Vuex from 'vuex';
 import firebase from 'firebase/app';
@@ -27,7 +28,8 @@ const storageRef = firebase.storage().ref();
 
 export default new Vuex.Store({
   state: {
-    id: [],
+    idExists: false,
+    presentid: '',
     name: '',
     email: '',
     loadings: {
@@ -163,6 +165,9 @@ export default new Vuex.Store({
     setIsFirst(state, payload) {
       state.isFirst = payload;
     },
+    setPresentId(state, payload) {
+      state.presentid = payload;
+    },
   },
   actions: {
     createNewUserAccount({ commit }, payload) {
@@ -220,13 +225,13 @@ export default new Vuex.Store({
           });
       });
     },
-    submitPresentingDataToFirebase({ commit }, payload) {
+    submitPresentingDataToFirebase({ commit, state }, payload) {
       return new Promise((resolve) => {
         commit('setSubmittingPresentingDataToFirebase', true);
         firebase
           .database()
-          .ref(`${DATABASE}/presenting/data`)
-          .push(payload)
+          .ref(`${DATABASE}/presenting/data/{state.presentingid}`)
+          .set(payload)
           .then(() => {
             commit('setSubmittingPresentingDataToFirebase', false);
             resolve();
@@ -237,7 +242,7 @@ export default new Vuex.Store({
       return new Promise((resolve) => {
         firebase
           .database()
-          .ref(`${DATABASE}/presenting/data/${state.presentingPdfAttributes.pdfid}/currentPage`)
+          .ref(`${DATABASE}/presenting/data/${state.presentingPdfAttributes.presentid}/currentPage`)
           .set(state.presentingPdfAttributes.currentPage)
           .then(() => {
             resolve();
@@ -249,7 +254,7 @@ export default new Vuex.Store({
         const prevPage = state.presentingPdfAttributes.currentPage;
         firebase
           .database()
-          .ref(`${DATABASE}/presenting/data/${state.presentingPdfAttributes.pdfid}/currentPage`)
+          .ref(`${DATABASE}/presenting/data/${state.presentingPdfAttributes.presentid}/currentPage`)
           .set(0)
           .then(() => {
             firebase
@@ -275,7 +280,7 @@ export default new Vuex.Store({
     getTimestamp({ state }) {
       const Timestamp = firebase
         .database()
-        .ref(`${DATABASE}/presenting/data/${state.pdfid}/timestamp`);
+        .ref(`${DATABASE}/presenting/data/${state.presentid}/timestamp`);
       Timestamp.on('value', () => {
         if (state.isFirst === false) {
           router.replace('/');
@@ -381,6 +386,25 @@ export default new Vuex.Store({
             });
         }
       });
+    }, 
+    idExists(payload) {
+      return new Promise((resolve) => {
+        firebase
+          .database()
+          .ref(`${DATABASE}/presenting/id/${retVal}`)
+          .once('value', (snapshot) => {
+            if (snapshot.exists() === false) {
+              resolve(retVal);
+            }
+          })
+      });
+    },
+    setPresentIdAction({ commit, dispatch }, payload) {
+      dispatch('idExists', payload)
+        .then((ret) => {
+          if (ret) commit('setPresentingId', payload);
+          else alert("presenting id doesn't exist! Try again.")
+        });
     },
     presentPdf({ commit, state, dispatch }, payload) {
       commit('setPresentPdfLoading', true);

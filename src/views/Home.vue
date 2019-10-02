@@ -16,6 +16,26 @@
     
     <v-row no-gutters>
       <v-col>
+        join a session
+        <v-form
+          ref="form"
+          v-model="valid"
+          :lazy-validation="lazy"
+        >
+          <v-text-field
+            v-model="presentid"
+            :counter="10"
+            :rules="nameRules"
+            label="Name"
+            required
+          ></v-text-field>
+        </v-form>
+      </v-col>
+    </v-row>
+
+        <v-row no-gutters>
+      <v-col>
+        
       </v-col>
     </v-row>
 
@@ -45,7 +65,6 @@ export default {
   computed: {
     ...mapState([
       'presentingPdfAttributes',
-      'id',
     ]),
   },
   methods: {
