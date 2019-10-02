@@ -77,6 +77,7 @@ export default {
     this.setIsFirstAction(false);
   },
   data: () => ({
+    url: `https://vue-firebase-sync.firebaseapp.com/viewer/${presentid}`
   }),
   computed: {
     ...mapState([
@@ -85,6 +86,10 @@ export default {
     ]),
   },
   methods: {
+    copy () {
+      var dummy = $('<input>').val(this.url).appendTo('body').select();
+      document.execCommand("copy");
+    },
     ...mapActions([
       'getTimestamp',
       'getPresentingData',

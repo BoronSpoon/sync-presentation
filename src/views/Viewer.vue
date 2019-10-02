@@ -57,6 +57,7 @@ export default {
     this.getPresentingData();
   },
   data: () => ({
+    url: `https://vue-firebase-sync.firebaseapp.com/viewer/${presentid}`
   }),
   computed: {
     ...mapState([
@@ -65,6 +66,16 @@ export default {
     ]),
   },
   methods: {
+    copy () {
+      var dummy = document.createElement("input");
+      dummy.style.display = 'none';
+      document.body.appendChild(dummy);
+      dummy.setAttribute("id", "dummy_id");
+      document.getElementById("dummy_id").value=this.url;
+      dummy.select();
+      document.execCommand("copy");
+      document.body.removeChild(dummy);
+    },
     ...mapActions([
       'getPresentingData',
       'getCurrentUser',
