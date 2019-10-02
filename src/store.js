@@ -27,6 +27,7 @@ const storageRef = firebase.storage().ref();
 
 export default new Vuex.Store({
   state: {
+    id: '',
     name: '',
     email: '',
     loadings: {
@@ -388,7 +389,7 @@ export default new Vuex.Store({
                   })
                     .then(() => {
                       commit('setPresentPdfLoading', false);
-                      router.push('presenter');
+                      router.push("{name:'viewer',params:{id:this.id}}");
                     });
                 });
             });

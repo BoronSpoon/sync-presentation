@@ -4,6 +4,7 @@
 
     <v-row no-gutters>
       <v-col align="center">
+        PDF ID: <bold>{{ id }}</bold>
       </v-col>
 
       <v-col align="center">
@@ -13,7 +14,7 @@
       </v-col>
 
       <v-col align="center">
-        <v-btn to='/selecter'>
+        <v-btn v-on:click="getCurrentUser().then(() => this.$router.push('/selecter')).catch(() => this.$router.push('/login'));">
           present YOUR Pdf files
           <v-icon>picture_as_pdf</v-icon>
         </v-btn>
@@ -60,11 +61,13 @@ export default {
   computed: {
     ...mapState([
       'presentingPdfAttributes',
+      'id',
     ]),
   },
   methods: {
     ...mapActions([
       'getPresentingData',
+      'getCurrentUser',
     ]),
   },
 };
