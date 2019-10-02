@@ -225,7 +225,7 @@ export default new Vuex.Store({
         commit('setSubmittingPresentingDataToFirebase', true);
         firebase
           .database()
-          .ref(`${DATABASE}/presenting/data`)
+          .ref(`${DATABASE}/presenting/data/${payload}`)
           .set(payload)
           .then(() => {
             commit('setSubmittingPresentingDataToFirebase', false);
@@ -233,11 +233,11 @@ export default new Vuex.Store({
           });
       });
     },
-    submitPresentingPageToFirebase({ state }) {
+    submitPresentingPageToFirebase({ state }, payload) {
       return new Promise((resolve) => {
         firebase
           .database()
-          .ref(`${DATABASE}/presenting/data/currentPage`)
+          .ref(`${DATABASE}/presenting/data/${payload}/currentPage`)
           .set(state.presentingPdfAttributes.currentPage)
           .then(() => {
             resolve();
