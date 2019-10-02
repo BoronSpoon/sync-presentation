@@ -11,18 +11,18 @@
     <v-divider/>
     
     <v-form ref="form" v-model="valid">
-      <v-row no-gutters>
+      <v-row no-gutters  class="title">
         join a session
       </v-row>
       <v-row no-gutters>
-        <v-col align="center">
+        <v-col align="right">
           <v-text-field
             v-model="tempPresentId"
             :rules="idRules"
             label="enter session id (6 letters)"
           ></v-text-field>
         </v-col>
-        <v-col align="center">
+        <v-col align="left">
           <v-btn
             type="submit"
             color="success"
@@ -38,10 +38,10 @@
     <v-divider/>
 
     <v-row no-gutters>
-      <v-col align="left">
+      <v-col align="left" class="title">
       present your pdf
       </v-col>
-      <v-col align="center">
+      <v-col align="left">
         <v-btn
           type="submit"
           color="success"

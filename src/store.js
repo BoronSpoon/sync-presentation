@@ -234,7 +234,6 @@ export default new Vuex.Store({
           .then((ret) => {
             if (ret) {
               commit('setSubmittingPresentingDataToFirebase', true);
-              console.log(`${DATABASE}/presenting/${state.firebaseid}`);
               firebase
                 .database()
                 .ref(`${DATABASE}/presenting/${state.firebaseid}`)
@@ -252,7 +251,6 @@ export default new Vuex.Store({
                 .push(payload)
                 .then((res) => {
                   commit('setSubmittingPresentingDataToFirebase', false);
-                  console.log(res.key)
                   commit('setFirebaseId', res.key);
                   dispatch('updateIdList')
                     .then(() => { resolve(); });
@@ -282,7 +280,7 @@ export default new Vuex.Store({
           .then(() => {
             firebase
               .database()
-              .ref(`${DATABASE}/presenting/currentPage`)
+              .ref(`${DATABASE}/presenting/${state.firebaseid}/currentPage`)
               .set(prevPage)
               .then(() => {
                 resolve();
@@ -303,17 +301,17 @@ export default new Vuex.Store({
     getTimestamp({ state }) {
       const Timestamp = firebase
         .database()
-        .ref(`${DATABASE}/presenting/${state.presentid}/timestamp`);
+        .ref(`${DATABASE}/presenting/${state.firebaseid}/timestamp`);
       Timestamp.on('value', () => {
         if (state.isFirst === false) {
-          router.replace('/');
+          router.replace(`/viewer/${state.presentid}`);
         }
       });
     },
-    getPresentingData({ commit }, payload) {
+    getPresentingData({ commit, state }) {
       const PresentingData = firebase
         .database()
-        .ref(`${DATABASE}/presenting/${payload}`);
+        .ref(`${DATABASE}/presenting/${state.firebaseid}`);
       PresentingData.on('value', (data) => {
         const value = data.val();
         commit('setPresentingPdfAttributes', {
@@ -322,7 +320,6 @@ export default new Vuex.Store({
           currentPage: value.currentPage,
           timestamp: '',
           url: pdf.createLoadingTask(value.url),
-          id: value.id,
         });
       });
     },
@@ -402,7 +399,7 @@ export default new Vuex.Store({
           .ref(`id-list/${state.presentid}`)
           .once('value', (snapshot) => {
             if (snapshot.exists()) {
-              commit('setFirebaseId', snapshot);
+              commit('setFirebaseId', snapshot.val());
             }
             resolve(snapshot.exists());
           });
@@ -449,8 +446,7 @@ export default new Vuex.Store({
           .ref(`id-list/${payload}`)
           .once('value', (snapshot) => {
             if (snapshot.exists()) {
-              console.log(snapshot)
-              commit('setFirebaseId', snapshot);
+              commit('setFirebaseId', snapshot.val());
             }
             resolve(snapshot.exists());
           });
@@ -458,12 +454,14 @@ export default new Vuex.Store({
     },
     setPresentIdAction({ commit, dispatch }, payload) {
       return new Promise((resolve) => {
-        console.log(payload)
         dispatch('idExists', payload)
           .then((ret) => {
             if (ret) {
               commit('setPresentId', payload);
-              router.push(`/viewer/${payload}`);
+              dispatch('getFirebaseId')
+                .then(() => {
+                  router.push(`/viewer/${payload}`);
+                });
             } else {
               alert('session id does not exist! try again.');
             }
@@ -497,8 +495,7 @@ export default new Vuex.Store({
                       })
                         .then(() => {
                           commit('setPresentPdfLoading', false);
-                          console.log(state.presentid)
-                          router.push(`/viewer/${state.presentid}`);
+                          router.push('/presenter');
                         });
                     });
                 });
