@@ -54,7 +54,7 @@ export default {
     pdf
   },
   created() {
-    this.getPresentingData(this.presentid);
+    this.getPresentingData();
   },
   data: () => ({
   }),
