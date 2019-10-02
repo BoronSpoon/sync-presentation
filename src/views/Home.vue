@@ -46,7 +46,7 @@
         <v-btn
           type="submit"
           color="success"
-          @click="getCurrentUser().then(() => {router.replace('/selecter')}).catch(() => {router.replace('/login')})">
+          @click="getCurrentUser().then(() => {$router.push('/selecter')}).catch(() => {$router.push('/login')})">
         GO
         </v-btn>
       </v-col>
@@ -69,7 +69,7 @@ import { mapActions, mapState } from 'vuex';
 
 export default {
   components: {
-    pdf
+    pdf,
   },
   created() {
   },

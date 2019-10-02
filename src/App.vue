@@ -19,7 +19,7 @@ export default {
     this.$router.push('/')
   },
   methods: {
-    ...mapActions(['getCurrentUser']),
+    ...mapActions([]),
   },
 };
 </script>
