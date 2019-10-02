@@ -364,6 +364,16 @@ export default new Vuex.Store({
           resolve();
         });
       });
+    },    
+    getUniqueId() {
+      return new Promise((resolve) => {
+        while(true){
+          const retVal = Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
+          if (retVal in ){
+            resolve(retVal);
+          }
+        }        
+      });
     },
     presentPdf({ commit, state, dispatch }, payload) {
       commit('setPresentPdfLoading', true);
@@ -373,23 +383,30 @@ export default new Vuex.Store({
             .then(() => {
               dispatch('uploadPresentingFile', payload.title)
                 .then(() => {
-                  commit('setPresentingPdfAttributes', {
-                    title: payload.title,
-                    numPages: payload.numPages,
-                    currentPage: payload.resumePage,
-                    timestamp: '',
-                    url: state.url,
-                  });
-                  dispatch('submitPresentingDataToFirebase', {
-                    title: state.presentingPdfAttributes.title,
-                    numPages: state.presentingPdfAttributes.numPages,
-                    currentPage: state.presentingPdfAttributes.currentPage,
-                    timestamp: new Date().toISOString(),
-                    url: state.presentingPdfAttributes.url,
-                  })
-                    .then(() => {
-                      commit('setPresentPdfLoading', false);
-                      router.push("{name:'viewer',params:{id:this.id}}");
+                  dispatch('getUniqueId)')
+                    .then((uniqueid) => {
+                      commit('setPresentingPdfAttributes', {
+                        title: payload.title,
+                        numPages: payload.numPages,
+                        currentPage: payload.resumePage,
+                        timestamp: '',
+                        url: state.url,
+                        id: uniqueid,
+                      });
+                      dispatch('submitPresentingDataToFirebase', {
+                        values: {
+                          title: state.presentingPdfAttributes.title,
+                          numPages: state.presentingPdfAttributes.numPages,
+                          currentPage: state.presentingPdfAttributes.currentPage,
+                          timestamp: new Date().toISOString(),
+                          url: state.presentingPdfAttributes.url,
+                        },
+                        id: state.presentingPdfAttributes.id,
+                      })
+                        .then(() => {
+                          commit('setPresentPdfLoading', false);
+                          router.push("{name:'viewer',params:{id:this.id}}");
+                        });
                     });
                 });
             });

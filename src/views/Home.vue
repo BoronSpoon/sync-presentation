@@ -7,6 +7,7 @@
       </v-col>
 
       <v-col align="center">
+        SYNC Presentation Home
       </v-col>
 
       <v-col align="center">
