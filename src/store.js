@@ -373,22 +373,18 @@ export default new Vuex.Store({
       });
     },
     getUniqueId({ state }) {
-      const ret = true;
       return new Promise((resolve) => {
         if (state.presentid != '') resolve(state.presentid);
-        else {
-          while (ret) {
-            const retVal = Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
-            firebase
-              .database()
-              .ref(`${DATABASE}/presenting/id/${retVal}`)
-              .once('value', (snapshot) => {
-                if (snapshot.exists() === false) {
-                  ret = false;
-                  resolve(retVal);
-                }
-              });
-          }
+        while (ret) {
+          const retVal = Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
+          firebase
+            .database()
+            .ref(`${DATABASE}/presenting/id/${retVal}`)
+            .once('value', (snapshot) => {
+              if (snapshot.exists() === false) {
+                resolve(retVal);
+              }
+            });
         }
       });
     },
