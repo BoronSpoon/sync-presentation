@@ -230,7 +230,7 @@ export default new Vuex.Store({
         commit('setSubmittingPresentingDataToFirebase', true);
         firebase
           .database()
-          .ref(`${DATABASE}/presenting/data/${state.presentingPdfAttributes.presentid}`)
+          .ref(`${DATABASE}/presenting/${state.presentingPdfAttributes.presentid}`)
           .set(payload)
           .then(() => {
             commit('setSubmittingPresentingDataToFirebase', false);
@@ -242,7 +242,7 @@ export default new Vuex.Store({
       return new Promise((resolve) => {
         firebase
           .database()
-          .ref(`${DATABASE}/presenting/data/${state.presentingPdfAttributes.presentid}/currentPage`)
+          .ref(`${DATABASE}/presenting/${state.presentingPdfAttributes.presentid}/currentPage`)
           .set(state.presentingPdfAttributes.currentPage)
           .then(() => {
             resolve();
@@ -254,12 +254,12 @@ export default new Vuex.Store({
         const prevPage = state.presentingPdfAttributes.currentPage;
         firebase
           .database()
-          .ref(`${DATABASE}/presenting/data/${state.presentingPdfAttributes.presentid}/currentPage`)
+          .ref(`${DATABASE}/presenting/${state.presentingPdfAttributes.presentid}/currentPage`)
           .set(0)
           .then(() => {
             firebase
               .database()
-              .ref(`${DATABASE}/presenting/data/currentPage`)
+              .ref(`${DATABASE}/presenting/currentPage`)
               .set(prevPage)
               .then(() => {
                 resolve();
@@ -280,7 +280,7 @@ export default new Vuex.Store({
     getTimestamp({ state }) {
       const Timestamp = firebase
         .database()
-        .ref(`${DATABASE}/presenting/data/${state.presentid}/timestamp`);
+        .ref(`${DATABASE}/presenting/${state.presentid}/timestamp`);
       Timestamp.on('value', () => {
         if (state.isFirst === false) {
           router.replace('/');
@@ -290,7 +290,7 @@ export default new Vuex.Store({
     getPresentingData({ commit }, payload) {
       const PresentingData = firebase
         .database()
-        .ref(`${DATABASE}/presenting/data/${payload}`);
+        .ref(`${DATABASE}/presenting/${payload}`);
       PresentingData.on('value', (data) => {
         const value = data.val();
         commit('setPresentingPdfAttributes', {
@@ -374,17 +374,23 @@ export default new Vuex.Store({
     },
     getUniqueId({ state }) {
       return new Promise((resolve) => {
-        if (state.presentid != '') resolve(state.presentid);
-        while (ret) {
-          const retVal = Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
-          firebase
-            .database()
-            .ref(`${DATABASE}/presenting/id/${retVal}`)
-            .once('value', (snapshot) => {
-              if (snapshot.exists() === false) {
-                resolve(retVal);
-              }
-            });
+        let payload = true;
+        if (true) resolve('abcdef');
+        //if (state.presentid !== '') resolve(state.presentid);
+        else {
+          while (payload) {
+            const retVal = Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
+            firebase
+              .database()
+              .ref(`${DATABASE}/presenting/${retVal}`)
+              .once('value', (snapshot) => {
+                payload = snapshot.exists()
+              });
+            if (payload === false) {
+              resolve(retVal);
+              break;
+            }
+          }
         }
       });
     },
@@ -392,7 +398,7 @@ export default new Vuex.Store({
       return new Promise((resolve) => {
         firebase
           .database()
-          .ref(`${DATABASE}/presenting/data/${payload}`)
+          .ref(`${DATABASE}/presenting/${payload}`)
           .once('value', (snapshot) => {
             resolve(snapshot.exists());
           });
