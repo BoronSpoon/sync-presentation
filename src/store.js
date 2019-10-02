@@ -148,7 +148,7 @@ export default new Vuex.Store({
       state.presentingPdfAttributes.currentPage = payload.currentPage;
       state.presentingPdfAttributes.timestamp = payload.timestamp;
       state.presentingPdfAttributes.url = payload.url;
-      state.presentingPdfAttributes.id = payload.id;
+      state.presentingPdfAttributes.presentid = payload.presentid;
     },
     setPresentingPdfPageIncrement(state, payload) {
       state.presentingPdfAttributes.currentPage += payload;
@@ -230,7 +230,7 @@ export default new Vuex.Store({
         commit('setSubmittingPresentingDataToFirebase', true);
         firebase
           .database()
-          .ref(`${DATABASE}/presenting/data/{state.presentingid}`)
+          .ref(`${DATABASE}/presenting/data/${state.presentingPdfAttributes.presentid}`)
           .set(payload)
           .then(() => {
             commit('setSubmittingPresentingDataToFirebase', false);
@@ -372,18 +372,23 @@ export default new Vuex.Store({
         });
       });
     },
-    getUniqueId() {
+    getUniqueId({ state }) {
+      const ret = true;
       return new Promise((resolve) => {
-        while (true) {
-          const retVal = Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
-          firebase
-            .database()
-            .ref(`${DATABASE}/presenting/id/${retVal}`)
-            .once('value', (snapshot) => {
-              if (snapshot.exists() === false) {
-                resolve(retVal);
-              }
-            });
+        if (state.presentid != '') resolve(state.presentid);
+        else {
+          while (ret) {
+            const retVal = Math.random().toString(36).substring(2, 5) + Math.random().toString(36).substring(2, 5);
+            firebase
+              .database()
+              .ref(`${DATABASE}/presenting/id/${retVal}`)
+              .once('value', (snapshot) => {
+                if (snapshot.exists() === false) {
+                  ret = false;
+                  resolve(retVal);
+                }
+              });
+          }
         }
       });
     },
@@ -419,7 +424,7 @@ export default new Vuex.Store({
             .then(() => {
               dispatch('uploadPresentingFile', payload.title)
                 .then(() => {
-                  dispatch('getUniqueId)')
+                  dispatch('getUniqueId')
                     .then((uniqueid) => {
                       commit('setPresentingPdfAttributes', {
                         title: payload.title,
@@ -430,14 +435,11 @@ export default new Vuex.Store({
                         id: uniqueid,
                       });
                       dispatch('submitPresentingDataToFirebase', {
-                        value: {
-                          title: state.presentingPdfAttributes.title,
-                          numPages: state.presentingPdfAttributes.numPages,
-                          currentPage: state.presentingPdfAttributes.currentPage,
-                          timestamp: new Date().toISOString(),
-                          url: state.presentingPdfAttributes.url,
-                        },
-                        id: state.presentingPdfAttributes.id,
+                        title: state.presentingPdfAttributes.title,
+                        numPages: state.presentingPdfAttributes.numPages,
+                        currentPage: state.presentingPdfAttributes.currentPage,
+                        timestamp: new Date().toISOString(),
+                        url: state.presentingPdfAttributes.url,
                       })
                         .then(() => {
                           commit('setPresentPdfLoading', false);

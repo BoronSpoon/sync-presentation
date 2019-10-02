@@ -4,7 +4,7 @@
 
     <v-row no-gutters>
       <v-col align="left">
-        <v-btn to='/'>
+        <v-btn v-on:click="$router.push(`{name:'viewer',params:{id:${presentid}}}`)">
           go back to viewer
           <v-icon>exit_to_app</v-icon>
         </v-btn>
@@ -115,6 +115,7 @@ export default {
       deletePdfLoading: state => state.loadings.deletingPdf,
       presentPdfLoading: state => state.loadings.presentingPdf,
       pdfList: state => state.pdfList,
+      presentid: state => state.presentid,
     }),
   },
   methods: {
