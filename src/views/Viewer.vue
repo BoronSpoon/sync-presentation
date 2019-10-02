@@ -4,23 +4,39 @@
 
     <v-row no-gutters>
       <v-col align="center">
+        PDF ID: <bold>{{ id }}</bold>
       </v-col>
 
       <v-col align="center">
+        <v-card tile>
+          TITLE: {{ presentingPdfAttributes.title }}
+        </v-card>
       </v-col>
 
       <v-col align="center">
+        <v-btn v-on:click="getCurrentUser().then(() => this.$router.push('/selecter')).catch(() => this.$router.push('/login'));">
+          present YOUR Pdf files
+          <v-icon>picture_as_pdf</v-icon>
+        </v-btn>
       </v-col>
     </v-row>
     
     <v-row no-gutters>
       <v-col>
+        <v-card tile align="center">
+          <pdf 
+            :src = presentingPdfAttributes.url
+            :page = presentingPdfAttributes.currentPage
+            style="display: inline-block; width: 80%"
+          />
+        </v-card>
       </v-col>
     </v-row>
 
     <v-row no-gutters class="primary">
       <v-col>
         <v-card tile align="center">
+          {{ presentingPdfAttributes.currentPage }} / {{ presentingPdfAttributes.numPages }}
         </v-card>
       </v-col>
     </v-row>

@@ -16,6 +16,7 @@ import { mapActions } from 'vuex';
 
 export default {
   created() {
+    this.$router.push('/')
   },
   methods: {
     ...mapActions(['getCurrentUser']),

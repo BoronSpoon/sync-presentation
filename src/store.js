@@ -27,7 +27,7 @@ const storageRef = firebase.storage().ref();
 
 export default new Vuex.Store({
   state: {
-    id: '',
+    id: [],
     name: '',
     email: '',
     loadings: {
