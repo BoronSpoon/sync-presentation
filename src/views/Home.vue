@@ -4,44 +4,57 @@
 
     <v-row no-gutters>
       <v-col align="center">
+        SYNC Presentation Home
       </v-col>
 
       <v-col align="center">
-        SYNC Presentation Home
       </v-col>
 
       <v-col align="center">
       </v-col>
     </v-row>
     
-    <v-row no-gutters>
-      <v-col>
+    <v-form ref="form" v-model="valid">
+      <v-row no-gutters>
         join a session
-        <v-form
-          ref="form"
-          v-model="valid"
-          :lazy-validation="lazy"
-        >
+      </v-row>
+      <v-row no-gutters>
+        <v-col align="center">
           <v-text-field
             v-model="tempPresentId"
-            :counter="10"
-            :rules="nameRules"
-            label="Name"
-            @click="setPresentIdAction.then(() => {})"
+            :rules="idRules"
+            label="enter session id (6 letters)"
           ></v-text-field>
-        </v-form>
-      </v-col>
-    </v-row>
+        </v-col>
+        <v-col align="center">
+          <v-btn
+            type="submit"
+            color="success"
+            :disabled="!valid"
+            @click="setPresentIdAction(tempPresentId).then(() => {})">
+          Submit
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-form>
 
-        <v-row no-gutters>
-      <v-col>
-        
+    <v-row no-gutters>
+      <v-col align="center">
+      present your pdf
+      </v-col>
+      <v-col align="center">
+        <v-btn
+          type="submit"
+          color="success"
+          @click="getCurrentUser().then(() => {router.replace('/selecter')}).catch(() => {router.replace('/login')})">
+        GO
+        </v-btn>
       </v-col>
     </v-row>
 
     <v-row no-gutters class="primary">
-      <v-col>
-        <v-card tile align="center">
+      <v-col align="center">
+        <v-card>
         </v-card>
       </v-col>
     </v-row>
@@ -61,7 +74,12 @@ export default {
   created() {
   },
   data: () => ({
-    tempPresentId
+    valid: false,
+    tempPresentId: 0,
+    idRules: [
+      v => !!v || 'id is required',
+      v => v.length == 6 || 'id must be 6 characters',
+    ],
   }),
   computed: {
     ...mapState([
