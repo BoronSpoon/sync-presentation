@@ -8,7 +8,7 @@
           exit
           <v-icon>exit_to_app</v-icon>
         </v-btn>
-        PDF ID: <bold>{{ id }}</bold>
+        PDF ID: {{ presentid }}
       </v-col>
 
       <v-col align="center">
@@ -81,7 +81,7 @@ export default {
   computed: {
     ...mapState([
       'presentingPdfAttributes',
-      'id',
+      'presentid',
     ]),
   },
   methods: {
