@@ -225,19 +225,19 @@ export default new Vuex.Store({
         commit('setSubmittingPresentingDataToFirebase', true);
         firebase
           .database()
-          .ref(`${DATABASE}/presenting/data/${payload}`)
-          .set(payload)
+          .ref(`${DATABASE}/presenting/data`)
+          .push(payload)
           .then(() => {
             commit('setSubmittingPresentingDataToFirebase', false);
             resolve();
           });
       });
     },
-    submitPresentingPageToFirebase({ state }, payload) {
+    submitPresentingPageToFirebase({ state }) {
       return new Promise((resolve) => {
         firebase
           .database()
-          .ref(`${DATABASE}/presenting/data/${payload}/currentPage`)
+          .ref(`${DATABASE}/presenting/data/${state.presentingPdfAttributes.pdfid}/currentPage`)
           .set(state.presentingPdfAttributes.currentPage)
           .then(() => {
             resolve();
@@ -249,7 +249,7 @@ export default new Vuex.Store({
         const prevPage = state.presentingPdfAttributes.currentPage;
         firebase
           .database()
-          .ref(`${DATABASE}/presenting/data/currentPage`)
+          .ref(`${DATABASE}/presenting/data/${state.presentingPdfAttributes.pdfid}/currentPage`)
           .set(0)
           .then(() => {
             firebase
@@ -275,7 +275,7 @@ export default new Vuex.Store({
     getTimestamp({ state }) {
       const Timestamp = firebase
         .database()
-        .ref(`${DATABASE}/presenting/data/timestamp`);
+        .ref(`${DATABASE}/presenting/data/${state.pdfid}/timestamp`);
       Timestamp.on('value', () => {
         if (state.isFirst === false) {
           router.replace('/');
