@@ -228,18 +228,36 @@ export default new Vuex.Store({
           });
       });
     },
-    submitPresentingDataToFirebase({ commit, dispatch }, payload) {
+    submitPresentingDataToFirebase({ state, commit, dispatch }, payload) {
       return new Promise((resolve) => {
-        commit('setSubmittingPresentingDataToFirebase', true);
-        firebase
-          .database()
-          .ref(`${DATABASE}/presenting`)
-          .push(payload)
-          .then((res) => {
-            commit('setSubmittingPresentingDataToFirebase', false);
-            commit('setFirebaseId', res.key);
-            dispatch('updateIdList')
-              .then(() => { resolve(); });
+        dispatch('idExists', state.presentid)
+          .then((ret) => {
+            if (ret) {
+              commit('setSubmittingPresentingDataToFirebase', true);
+              console.log(`${DATABASE}/presenting/${state.firebaseid}`);
+              firebase
+                .database()
+                .ref(`${DATABASE}/presenting/${state.firebaseid}`)
+                .update(payload)
+                .then(() => {
+                  commit('setSubmittingPresentingDataToFirebase', false);
+                  dispatch('updateIdList')
+                    .then(() => { resolve(); });
+                });
+            } else {
+              commit('setSubmittingPresentingDataToFirebase', true);
+              firebase
+                .database()
+                .ref(`${DATABASE}/presenting`)
+                .push(payload)
+                .then((res) => {
+                  commit('setSubmittingPresentingDataToFirebase', false);
+                  console.log(res.key)
+                  commit('setFirebaseId', res.key);
+                  dispatch('updateIdList')
+                    .then(() => { resolve(); });
+                });
+            }
           });
       });
     },
@@ -431,6 +449,7 @@ export default new Vuex.Store({
           .ref(`id-list/${payload}`)
           .once('value', (snapshot) => {
             if (snapshot.exists()) {
+              console.log(snapshot)
               commit('setFirebaseId', snapshot);
             }
             resolve(snapshot.exists());
@@ -439,6 +458,7 @@ export default new Vuex.Store({
     },
     setPresentIdAction({ commit, dispatch }, payload) {
       return new Promise((resolve) => {
+        console.log(payload)
         dispatch('idExists', payload)
           .then((ret) => {
             if (ret) {
