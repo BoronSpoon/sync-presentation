@@ -3,16 +3,12 @@
   <v-container>
 
     <v-row no-gutters>
-      <v-col align="center">
+      <v-col align="left" class="display-1 font-weight-black">
         SYNC Presentation Home
       </v-col>
-
-      <v-col align="center">
-      </v-col>
-
-      <v-col align="center">
-      </v-col>
     </v-row>
+
+    <v-divider/>
     
     <v-form ref="form" v-model="valid">
       <v-row no-gutters>
@@ -38,8 +34,11 @@
       </v-row>
     </v-form>
 
+
+    <v-divider/>
+
     <v-row no-gutters>
-      <v-col align="center">
+      <v-col align="left">
       present your pdf
       </v-col>
       <v-col align="center">
@@ -52,12 +51,17 @@
       </v-col>
     </v-row>
 
+  <v-divider/>
+
     <v-row no-gutters class="primary">
       <v-col align="center">
         <v-card>
         </v-card>
       </v-col>
     </v-row>
+
+
+  <v-divider/>
 
   </v-container>
   </div>
