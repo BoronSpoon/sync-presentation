@@ -21,6 +21,7 @@ Web app to syncronize presenting page between presenter and viewer.
 - Language: Javascript
   - UI framework: Vuejs
     - Vuex, Vue Router, Vuetify
+  - PDFjs: Used to show PDF
 - Database：Firebase Realtime Database
 - Storage：Firebase storage
 - Authentication：Firebase Auth
