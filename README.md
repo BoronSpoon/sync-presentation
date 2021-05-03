@@ -2,7 +2,6 @@
 
 ## Overview
 Web app to syncronize presenting page between presenter and viewer.   
-Link：https://vue-firebase-sync.firebaseapp.com
 
 - SPP host: Presenter. Can change current page.
 - SPP client: Viewer. Can change current page if presenter allows it.
